@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: 
+      - README.md
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v15
+    
+    - uses: actions/cache@v1
+      id: cache
+      with:
+        path: cache
+        key: ${{runner.os}}-cache-closure-${{github.sha}}
+        restore-keys: ${{ runner.os }}-cache-closure-
+        
+    - name: Load closure
+      run: |
+        if [ -f cache/paper.closure ]; then
+          nix-store --import < cache/paper.closure
+        fi
+
+    - name: Build
+      run: nix-build
+    
+    - name: Save closure
+      run: |
+        mkdir -p cache
+        nix-store --export $(nix-store -qR --include-outputs $(nix-instantiate)) > cache/paper.closure
+    
+    - uses: actions/upload-artifact@v1
+      with:
+        name: paper
+        path: result/paper.pdf
