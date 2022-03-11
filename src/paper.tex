@@ -1,11 +1,210 @@
 \documentclass{article}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
 
 \usepackage{biblatex}
 \addbibresource{references.bib}
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{listings}
+
+\DeclareMathOperator{\acc}{value}
+
+\usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows, fit, matrix, shapes.geometric, shapes.misc, calc}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\newcommand{\Ex}{\textbf{Npr.}:\ }
+\newcommand{\Special}[1]{\textbf{#1}}
+\newcommand{\FIRST}{\textsc{FIRST}}
+\newcommand{\FOLLOW}{\textsc{FOLLOW}}
+\newcommand{\Grammar}{G}
+\newcommand{\Terminals}{T}
+\newcommand{\NonTerminals}{N}
+\newcommand{\Productions}{P}
+\newcommand{\StartSymbol}{S}
+\newcommand{\Empty}{\varnothing}
+\newcommand{\Null}{\varepsilon}
+\newcommand{\Language}[1]{\mathcal{L}(#1)}
+\newcommand{\Automaton}[1]{\mathcal{M}(#1)}
+\newcommand{\Str}[1]{\text{\textquotedbl\texttt{#1}\textquotedbl}}
+\newcommand{\Char}[1]{\texttt{#1}}
+\newcommand{\Arrow}{\Coloneqq}
+\newcommand{\Derive}{\Rightarrow}
+\newcommand{\DeriveStar}{\xRightarrow{\ast}}
+\newcommand{\DerivePlus}{\xRightarrow{+}}
+\newcommand{\Seq}{\ }
+\newcommand{\Union}{\mathrel{|}}
+\newcommand{\Kleene}[1]{#1^\ast}
+\newcommand{\Rep}[2]{#1^#2}
+\newcommand{\Opt}[1]{#1?}
+\newcommand{\KleenePlus}[1]{#1^+}
+
+
 \begin{document}
-\section{Section}
-Text \cite{knuth_fa} text
+\Special{Meta:} Simboli so omejeni na (pod)poglavja.
+
+\section{Gramatike}
+Gramatika je tuple $\Grammar = (\NonTerminals, \Terminals, \Productions, \StartSymbol)$, kjer je $\NonTerminals$ končna množica neteminalnih simbolov, $\Terminals$ končna množica terminalnih simbolov, $\Productions$ je končna relacija produkcijskih pravil $\NonTerminals \times \Kleene{(\NonTerminals \cup \Terminals)}$ in $\StartSymbol \in \NonTerminals$ je začetni simbol.
+Tukaj $\Kleene{(\NonTerminals \cup \Terminals)}$ pomeni seznam terminalnih in neterminalnih simbolov (prazen seznam je $\Null$).
+
+\Ex
+\begin{align*}
+  \Grammar_1 &= (\NonTerminals_1, \Terminals_1, \Productions_1, \StartSymbol_1) \\
+  \NonTerminals_1 &= \{L\}\\
+  \Terminals_1 &= \{i\}\\
+  \Productions_1 &= \{ (L, (i, L)), (L, \Null) \}\\
+  \StartSymbol_1 &= L
+\end{align*}
+
+Produkcijska pravila pišemo z operatorjem $(\Arrow)$, na levi strani je vedno en neterminalen simbol na desni pa je lahko seznam terminalnih in neterminalnih simbolov.
+
+\Special{Meta:} Simbol na levi strani prvega produkcijskega pravila je začetni simbol
+
+\Ex
+\begin{equation}
+  \tag{$\Grammar_1$}
+  \label{g:listi}
+  \begin{aligned}
+    L &\Arrow i \Seq L\\
+    L &\Arrow \Null
+  \end{aligned}
+\end{equation}
+
+Produkcijska pravila, ki imajo na levi strani enak neterminalen simbol lahko združimo z unijo.
+\Ex
+\begin{align*}
+  L &\Arrow i \Seq L \Union \Null\\
+\end{align*}
+Gramatike so sistem prepisovanja.
+V seznamu terminalnih in neterminalnih simbolov, lahko neterminalne simbole zamenjamo z eno izmed desnih strani produkcijskega pravila, ki ima ta simbol na levi strani.
+Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več različnih možnosti (več desnih strani).
+
+\Ex
+  \begin{align*}
+    y &= x + x\\
+    x &= 1
+  \end{align*}
+  Če bi imeli poleg tega enačbo $x = 2$, bi nastal problem ($1 = 2$).
+
+  \begin{equation*}
+    y = x + x = 1 + x = 1 + 1
+  \end{equation*}
+
+  \begin{equation}
+    \tag{$\Grammar_2$}
+    \label{g:plusab}
+    \begin{aligned}
+      E &\Arrow N \Seq p \Seq N \Union \Null\\
+      N &\Arrow a \Union b
+    \end{aligned}
+  \end{equation}
+
+Če smo zamenjali samo en neterminalen simbol potem uporabimo operator $(\Derive)$, če smo jih zamenlali več $(\DerivePlus)$, če smo jih zamenjali več ali nobenega pa $(\DeriveStar)$.
+  \begin{align*}
+    E &\Derive N \Seq p \Seq N \Derive a \Seq p \Seq N \Derive a \Seq p \Seq b \\
+    E &\DerivePlus a \Seq p \Seq b\\
+    E &\DeriveStar E\\
+    E &\DeriveStar a \Seq p \Seq b
+  \end{align*}
+
+Stavčne oblike gramatike, so vsi seznami neterminalnih ali terminalnih simbolov $\alpha \in \Kleene{(\NonTerminals \cup \Terminals)}$, kjer $\StartSymbol \DeriveStar \alpha$.
+Seznam vseh stavčnih oblik dobimo tako, da gremo sistematično skozi vse možne izpeljave.
+
+\Ex
+
+  \begin{align*}
+    &L \\
+    &L \Derive i \Seq L \Derive i \Seq i \Seq L \Derive \dots \\
+    &\Null \Derive i \Seq \Null \Derive i \Seq i \Seq \Null \Derive \dots \\
+  \end{align*}
+Za \ref{g:listi} so vse stavčne oblike $\{L, i \Seq L, i \Seq i \Seq L, \dots, \Null, i, i \Seq i, \dots\}$.
+
+  \begin{align*}
+    &E \\
+    &E \Derive N \Seq p \Seq N \\
+    &E \Derive N \Seq p \Seq N \Derive a \Seq p \Seq N\\
+    &E \Derive N \Seq p \Seq N \Derive a \Seq p \Seq N \Derive a \Seq p \Seq a\\
+    &E \Derive N \Seq p \Seq N \Derive a \Seq p \Seq N \Derive a \Seq p \Seq b\\
+    &E \Derive N \Seq p \Seq N \Derive b \Seq p \Seq N\\
+    &E \Derive N \Seq p \Seq N \Derive b \Seq p \Seq N \Derive b \Seq p \Seq a\\
+    &E \Derive N \Seq p \Seq N \Derive b \Seq p \Seq N \Derive b \Seq p \Seq b\\
+  \end{align*}
+Za \ref{g:plusab} so vse stavčne oblike $\{E, N \Seq p \Seq N, a \Seq p \Seq N, b \Seq p \Seq N, N \Seq p \Seq a, N \Seq p \Seq b, a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}$.
+
+Stavki gramatike, so vsi seznami terminalnih simbolov $w \in \Kleene{\Terminals}$, kjer $\StartSymbol \DeriveStar w$.
+Seznam vseh stavkov dobimo tako, da gremo sistematično skozi vse možne izpeljave in izberemo samo tiste stavčne oblike, ki vsebujejo samo terminalne simbole.
+
+\Ex
+
+Za \ref{g:listi} so vsi stavki $\{\Null, i, i \Seq i, \dots\}$.
+
+Za \ref{g:plusab} vsi stavki $\{a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}$.
+
+Jezik, ki ga gramatika opisuje je množica vseh stavkov:
+\begin{equation*}
+  \Language{\Grammar} = \{ w \in \Kleene{T} \mid \StartSymbol \DeriveStar w\}
+\end{equation*}
+
+\Ex
+  \begin{align*}
+    \Language{\Grammar_1} &= \{\Null, i, i \Seq i, \dots\}\\
+    \Language{\Grammar_2} &= \{a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}
+  \end{align*}
+
+\subsection{Razpoznavanje}
+
+Preveriti želimo ali je nek seznam terminalov $u \in \Kleene{T}$ v jeziku za gramatiko $\Grammar$, torej $u \in \Language{\Grammar}$.
+
+\Ex
+  \begin{equation*}
+    i \Seq i \in \Language{\Grammar_1}
+  \end{equation*}
+
+  Ker $i \Seq i \in \{\Null, i, i \Seq i, \dots\}$ je odgovor v tem primeru pritrdilen.
+
+Problem je, da moramo sistematično iti skozi vse stavke.
+
+Rešitev je, da poskušamo iz $\StartSymbol$ izpeljati $u$, če je to mogoče potem $\StartSymbol \DeriveStar u$ in $u \in \Language{\Grammar}$ (po definiciji).
+Ker $u$ poznamo v naprej stavčnih oblik iz katerih $u$ ne gre izpeljati ne rabimo upoštevati.
+Za določene jezike velja, da je na vsaki točki izpeljave možna samo ena stavčna oblika.
+
+\Ex
+  \begin{equation*}
+    L \Derive i \Seq L \Derive i \Seq i \Seq L \Derive i \Seq i \Seq \Null
+  \end{equation*}
+  Torej je odgovor pritrdilen.
+
+Problem nastane, ko moramo izbrati med večimi desnimi stranmi.
+
+\Ex
+  \begin{equation*}
+    b \Seq p \Seq a \in \Language{\Grammar_2}
+  \end{equation*}
+
+  \begin{align*}
+    &E \\
+    &E \Derive N \Seq p \Seq N \\
+    &E \Derive N \Seq p \Seq N \Derive a \Seq p \Seq N\\
+    &E \Derive N \Seq p \Seq N \Derive b \Seq p \Seq N
+  \end{align*}
+
+Tukaj imamo dve možnosti ali uporabimo $N \Arrow a$ ali pa $N \Arrow b$.
+Rešitev je, da $a \Seq p \Seq N$ in $b \Seq p \Seq N$ primerjamo s $b \Seq p \Seq a$.
+Očitno je, da je pravilna izbira $N \Arrow b$.
+
+V nadalevanju se bomo omelili na takšne gramatike, kjer je mogoče izbrati pravilno desno stran s primerjavo enega samega terminalnega simbola.
+Prav tako bomo omejili vrstni red prepisovanja, vedno bomo najprej zamenjali najbolj levi neterminalni simbol.
+
+\subsection{\FIRST}
+
+
+\subsection{\FOLLOW}
+
 
 \printbibliography
 \end{document}
