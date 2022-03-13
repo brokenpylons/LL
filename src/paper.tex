@@ -22,15 +22,17 @@
 \newcommand{\Special}[1]{\textbf{#1}}
 \newcommand{\FIRST}{\textsc{FIRST}}
 \newcommand{\FOLLOW}{\textsc{FOLLOW}}
+\newcommand{\Set}[1]{\mathbf{#1}}
 \newcommand{\Grammar}{G}
-\newcommand{\Terminals}{T}
-\newcommand{\NonTerminals}{N}
-\newcommand{\Productions}{P}
+\newcommand{\Terminals}{\Set{T}}
+\newcommand{\NonTerminals}{\Set{N}}
+\newcommand{\Productions}{\Set{P}}
 \newcommand{\StartSymbol}{S}
 \newcommand{\Empty}{\varnothing}
 \newcommand{\Null}{\varepsilon}
 \newcommand{\Language}[1]{\mathcal{L}(#1)}
 \newcommand{\Automaton}[1]{\mathcal{M}(#1)}
+\newcommand{\Powerset}[1]{\mathcal{P}(#1)}
 \newcommand{\Str}[1]{\text{\textquotedbl\texttt{#1}\textquotedbl}}
 \newcommand{\Char}[1]{\texttt{#1}}
 \newcommand{\Arrow}{\Coloneqq}
@@ -197,13 +199,134 @@ Tukaj imamo dve možnosti ali uporabimo $N \Arrow a$ ali pa $N \Arrow b$.
 Rešitev je, da $a \Seq p \Seq N$ in $b \Seq p \Seq N$ primerjamo s $b \Seq p \Seq a$.
 Očitno je, da je pravilna izbira $N \Arrow b$.
 
-V nadalevanju se bomo omelili na takšne gramatike, kjer je mogoče izbrati pravilno desno stran s primerjavo enega samega terminalnega simbola.
-Prav tako bomo omejili vrstni red prepisovanja, vedno bomo najprej zamenjali najbolj levi neterminalni simbol.
+V nadaljevanju se bomo omejili na takšne gramatike, kjer je mogoče izbrati pravilno desno stran s primerjavo enega samega terminalnega simbola.
+Prav tako bomo omejili vrstni red prepisovanja, vedno bomo najprej zamenjali najbolj levi neterminalen simbol.
 
-\subsection{\FIRST}
+\section{Rekurzivna enumeracija}
+...
+\section{\FIRST}
 
 
-\subsection{\FOLLOW}
+Funkcija $\FIRST$ vrne množico prvih terminalnih simbolov.
+Na splošno je definirana za seznam neterminalnih in terminalnih simbolov:
+\begin{equation*}
+  \FIRST(\alpha) = \{ a \mid \alpha \DeriveStar a \Seq \beta \} \text{, kjer } \alpha \in \Kleene{(\NonTerminals \cup \Terminals)} \text{ in } a \in \Terminals \text{ in } \beta \in \Kleene{(\NonTerminals \cup \Terminals)}
+\end{equation*}
+
+Torej začnemo z $\alpha$ in sistematično zamenjujemo prvi neterminalen simbol z desnimi stranmi, dokler ni na začetku terminalen simbol.
+
+\Ex
+\begin{equation*}
+  \begin{aligned}
+    S &\Arrow A \Seq C \Union B \\
+    A &\Arrow C \Union D \Union a \\
+    B &\Arrow b\\
+    C &\Arrow c \Seq d\\
+    D &\Arrow \Null
+  \end{aligned}
+\end{equation*}
+
+\begin{align*}
+  A \Seq C &\Derive C \Seq C \Derive c \Seq d \Seq C \\
+           &\Derive D \Seq C \Derive \Null \Seq C \Derive \Seq c \Seq d \\
+           &\Derive a \Seq C
+\end{align*}
+
+Prvi neterminalen simbol je $A$.
+Prva opcija je, da uporabimo $A \Arrow C$ in ga zamenjamo s $C$.
+Nato je prvi neterminalen simbol $C$.
+Uporabimo $C \Arrow c \Seq d$ in ga zamenjamo s $c \Seq d$.
+Na začetku imamo terminalen simbol $c$.
+Druga opcija je, da uporabimo $A \Arrow D$.
+Na začetku imamo neterminalen simbol $D$.
+Uporabimo $D \Arrow \Null$.
+Na začetku imamo neterminalen simbol $C$.
+Uporabimo $C \Arrow c \Seq d$ in ga zamenjamo s $c \Seq d$.
+Na začetku imamo terminalen simbol $c$.
+Tretja opcija je, da uporabimo $A \Arrow a$ in ga zamenjamo z $a$.
+Na začetku imamo terminalen simbol $a$.
+Prva terminalna simbola sta torej $a$ in $c$, torej:
+\begin{equation*}
+  \FIRST(A \Seq C) = \{a, c\}
+\end{equation*}
+
+\Special{Poseben primer:} Če je $\alpha$ sestavljen iz samo enega terminalnega simbola ${(\alpha = a)}$, potem funkcija $\FIRST$ vrne množico, ki vsebuje ta terminalen simbol, ker trivialno $a \DeriveStar a$.
+\begin{equation*}
+  \FIRST(a) = \{ a \}
+\end{equation*}
+
+\Special{Poseben primer:} Če je $\alpha$ sestavljen iz samo enega neterminalnega simbola ${(\alpha = A)}$, potem je funkcija $\FIRST$:
+\begin{equation*}
+  \FIRST(A) = \{ a \mid A \DeriveStar a \Seq \beta \}
+\end{equation*}
+
+Če seznam $\alpha$ razdelimo na glavo $X$ in rep $\gamma$ seznama ${(\alpha = X \Seq \gamma)}$, potem dobimo pravilo:
+\begin{align*}
+  \FIRST(X \Seq \gamma) &= \FIRST(X \Seq \FIRST(\gamma))\\
+  \FIRST(a \Seq \gamma) &= \FIRST(a \Seq \FIRST(\gamma)) = \FIRST(a) \\
+  \FIRST(A \Seq \gamma) &= \FIRST(A \Seq \FIRST(\gamma)) 
+\end{align*}
+
+%\begin{equation*}
+%  \FIRST(\Set{S}) = \{ a \in \Terminals \mid \alpha \in \Set{S} \land \alpha \DeriveStar a \Seq \beta\}
+%\end{equation*}
+%
+%
+%\begin{equation*}
+%  \FIRST(a) = \{ a \}
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(A) = \{ a \mid A \DeriveStar a \Seq \beta \}
+%\end{equation*}
+%
+%\begin{align*}
+%  \FIRST(\alpha) &= \{ a \mid \alpha \DeriveStar a \Seq \beta \} \\
+%  \FIRST(a \Seq \gamma) &= \FIRST(a \Seq \FIRST(\gamma)) \\
+%  \FIRST(A \Seq \gamma) &= \FIRST(A \Seq \FIRST(\gamma)) \\
+%\end{align*}
+%
+%
+%\begin{equation*}
+%  \FIRST(\Set{S}) = \{ a \in \Terminals \mid \alpha \in \Set{S} \land \alpha \DeriveStar a \Seq \beta\}
+%\end{equation*}
+
+%Konkatenacija jezikov
+%\begin{equation*}
+%  L = \{ u \Seq v \mid u \in U \land v \in V\}
+%\end{equation*}
+
+%Množica $\FIRST$ vsebuje prve terminale vseh stavčnih oblik, ki jih lahko izpeljemo iz $\alpha \in \Kleene{(\NonTerminals \cup \Terminals)}$, in se začnejo s terminalom.
+
+%\begin{equation*}
+%  \FIRST(X) = \{ a \mid X \DeriveStar a \Seq \alpha\}
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(X) = \{ a \mid a \Seq v \in \Language{X}\}
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(a) = \{ a \}
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(X \Seq \gamma) = \FIRST(X \Seq \FIRST(\gamma))
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(a \Seq \gamma) = \FIRST(a \Seq \FIRST(\gamma))
+%\end{equation*}
+%
+%\begin{equation*}
+%  \FIRST(A \Seq \gamma) = \FIRST(A \Seq \FIRST(\gamma))
+%\end{equation*}
+
+
+
+
+
+\section{\FOLLOW}
 
 
 \printbibliography
