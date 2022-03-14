@@ -685,7 +685,7 @@ Rešitev problema je torej, da se odločimo na podlagi simbolov, ki sledijo $A$,
 Trenutna definicija $\FOLLOW$ je odvisna od trenutne stavčne oblike.
 Enako, kot $\FIRST$ želimo $\FOLLOW$ izračunati v naprej.
 Torej mora delovati za poljubno stavčno obliko.
-Rešitev problema je, da ga izračunamo za vse možne stavčne oblike:
+Rešitev problema je, da $\FOLLOW$ izračunamo za vse možne stavčne oblike:
 \begin{align*}
   \FOLLOW(A) &= \{a \mid S \DeriveStar \gamma \Seq A \Seq \eta \land a \in \FIRST(\eta)\}\\
   &= \bigcup_{S \DeriveStar \gamma \Seq A \Seq \eta} \FIRST(\eta)
@@ -713,7 +713,7 @@ Potem lahko iz $S$ izpeljemo:
 \begin{equation*}
   S \Seq \EOF \Derive \sigma \Seq B \Seq \tau \Seq \EOF \Derive \sigma \Seq \gamma \Seq A \Seq \eta \Seq \tau \Seq \EOF
 \end{equation*}
-Torej $S$ sledi $\EOF$, $B$ sledi $\tau$ in to kar sledi $S$, $A$ sledi $\eta \Seq \tau$, torej $\eta$ in to kar sledi $B$.
+Torej $S$ sledi $\EOF$, $B$ sledi $\tau \Seq \EOF$, torej $\tau$ in to kar sledi $S$, $A$ sledi $\eta \Seq \tau \Seq \EOF$, torej $\eta$ in to kar sledi $B$.
 \begin{align*}
   \FOLLOW(B) &= \FIRST(\FIRST(\tau) \Seq \FOLLOW(S))\\
   \FOLLOW(A) &= \FIRST(\FIRST(\eta) \Seq \FOLLOW(B))\\
