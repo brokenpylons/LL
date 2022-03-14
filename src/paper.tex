@@ -305,11 +305,7 @@ Torej začnemo z $\alpha$ in sistematično zamenjujemo prvi neterminalen simbol 
 \end{equation*}
 
 Prvi neterminalen simbol je $A$.
-Prva opcija je, da uporabimo $A \Arrow C$ in ga zamenjamo s $C$.
-Nato je prvi neterminalen simbol $C$.
-Uporabimo $C \Arrow c \Seq d$ in ga zamenjamo s $c \Seq d$.
-Na začetku imamo terminalen simbol $c$.
-Druga opcija je, da uporabimo $A \Arrow D$.
+Prva opcija je, da uporabimo $A \Arrow D$.
 Na začetku imamo neterminalen simbol $D$.
 Prva opcija je, da uporabimo $D \Arrow e$.
 Na začetku imamo terminalen simbol $e$.
@@ -317,6 +313,8 @@ Druga opcija je, da uporabimo $D \Arrow \Null$.
 Na začetku imamo neterminalen simbol $C$.
 Uporabimo $C \Arrow c \Seq d$ in ga zamenjamo s $c \Seq d$.
 Na začetku imamo terminalen simbol $c$.
+Druga opcija je, da uporabimo $A \Arrow a$.
+Na začetku imamo terminalen simbol $a$.
 Prvi terminalni simboli so torej $a$, $c$ in $e$:
 \begin{equation*}
   \FIRST(A \Seq C) = \{a, c, e\}
@@ -656,7 +654,7 @@ V vseh primerih dobimo enako, kot z uporabo splošne definicije:
 \end{equation*}
 
 Tokrat bomo $S$ pred začetkom izpeljave dodali $\EOF$.
-To je zato, ker $S$ konceptualno sledi $\EOF$, torej se pojavi v množicah $\FOLLOW$.
+To je zato, ker $S$ konceptualno sledi $\EOF$ in se zato pojavi v množicah $\FOLLOW$.
 \begin{equation*}
   S \Seq \EOF \begin{aligned}[t]
     &\Derive A \Seq C \Seq \EOF \begin{aligned}[t]
