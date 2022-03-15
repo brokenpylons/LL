@@ -5,6 +5,7 @@
 \usepackage{biblatex}
 \addbibresource{references.bib}
 
+\usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{listings}
@@ -24,6 +25,7 @@
 \newcommand{\FOLLOW}{\textsc{FOLLOW}}
 \newcommand{\EOF}{\textsc{EOF}}
 \newcommand{\Set}[1]{\mathbf{#1}}
+\newcommand{\Symbol}[1]{\textcolor{blue}{#1}}
 \newcommand{\Grammar}{G}
 \newcommand{\Terminals}{\Set{T}}
 \newcommand{\NonTerminals}{\Set{N}}
@@ -58,30 +60,30 @@ Tukaj $\Kleene{(\NonTerminals \cup \Terminals)}$ pomeni seznam terminalnih in ne
 \Ex
 \begin{align*}
   \Grammar_1 &= (\NonTerminals_1, \Terminals_1, \Productions_1, \StartSymbol_1) \\
-  \NonTerminals_1 &= \{L\}\\
-  \Terminals_1 &= \{i\}\\
-  \Productions_1 &= \{ (L, (i, L)), (L, \Null) \}\\
-  \StartSymbol_1 &= L
+  \NonTerminals_1 &= \{\Symbol{L}\}\\
+  \Terminals_1 &= \{\Symbol{i}\}\\
+  \Productions_1 &= \{ (\Symbol{L}, (\Symbol{i}, \Symbol{L})), (\Symbol{L}, \Null) \}\\
+  \StartSymbol_1 &= \Symbol{L}
 \end{align*}
 
 Produkcijska pravila pišemo z operatorjem $(\Arrow)$, na levi strani je vedno en neterminalen simbol na desni pa je lahko seznam terminalnih in neterminalnih simbolov.
 
-\Special{Meta:} Simbol na levi strani prve produkcije je začetni simbol.
+\Special{Meta:} Simbol na levi strani prve produkcije bo začetni simbol.
 
 \Ex
 \begin{equation}
   \tag{$\Grammar_1$}
   \label{g:listi}
   \begin{aligned}
-    L &\Arrow i \Seq L\\
-    L &\Arrow \Null
+    \Symbol{L} &\Arrow \Symbol{i} \Seq \Symbol{L}\\
+    \Symbol{L} &\Arrow \Null
   \end{aligned}
 \end{equation}
 
 Produkcijska pravila, ki imajo na levi strani enak neterminalen simbol lahko združimo z unijo.
 \Ex
 \begin{align*}
-  L &\Arrow i \Seq L \Union \Null\\
+  \Symbol{L} &\Arrow \Symbol{i} \Seq \Symbol{L} \Union \Null\\
 \end{align*}
 Gramatike so sistem prepisovanja.
 V seznamu terminalnih in neterminalnih simbolov, lahko neterminalne simbole zamenjamo z eno izmed desnih strani produkcijskega pravila, ki ima ta simbol na levi strani.
@@ -102,8 +104,8 @@ Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več razli
     \tag{$\Grammar_2$}
     \label{g:plusab}
     \begin{aligned}
-      E &\Arrow N \Seq p \Seq N\\
-      N &\Arrow a \Union b
+      \Symbol{E} &\Arrow \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
+      \Symbol{N} &\Arrow \Symbol{a} \Union \Symbol{b}
     \end{aligned}
   \end{equation}
 
@@ -111,14 +113,14 @@ Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več razli
 
 Če smo zamenjali samo en neterminalen simbol potem uporabimo operator $(\Derive)$, če smo jih zamenjali več $(\DerivePlus)$, če smo jih zamenjali več ali nobenega pa $(\DeriveStar)$.
   \begin{align*}
-    E &\Derive N \Seq p \Seq N \Derive a \Seq p \Seq N \Derive a \Seq p \Seq b \\
-    E &\DerivePlus N \Seq p \Seq N\\
-    N \Seq p \Seq N &\DerivePlus a \Seq p \Seq b\\
-    a \Seq p \Seq N &\DerivePlus a \Seq p \Seq b\\
-    E &\DerivePlus a \Seq p \Seq b\\
-    E &\DeriveStar E\\
-    N \Seq p \Seq N &\DerivePlus N \Seq p \Seq N\\
-    E &\DeriveStar a \Seq p \Seq b
+    \Symbol{E} &\Derive \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} \Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N} \Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b} \\
+    \Symbol{E} &\DerivePlus \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
+    \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} &\DerivePlus \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
+    \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N} &\DerivePlus \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
+    \Symbol{E} &\DerivePlus \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
+    \Symbol{E} &\DeriveStar \Symbol{E}\\
+    \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} &\DerivePlus \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
+    \Symbol{E} &\DeriveStar \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}
   \end{align*}
 
 Stavčne oblike gramatike, so vsi seznami neterminalnih ali terminalnih simbolov $\alpha \in \Kleene{(\NonTerminals \cup \Terminals)}$, kjer $\StartSymbol \DeriveStar \alpha$.
@@ -126,40 +128,40 @@ Seznam vseh stavčnih oblik dobimo tako, da gremo sistematično skozi vse možne
 
 \Ex
   \begin{equation*}
-    L \begin{aligned}[t]
-      &\Derive i \Seq L \begin{aligned}[t]
-        &\Derive i \Seq i \Seq L \begin{aligned}[t]
-          &\Derive i \Seq i \Seq i \Seq L \Derive \dots\\
-          &\Derive i \Seq i \Seq \Null 
+    \Symbol{L} \begin{aligned}[t]
+      &\Derive \Symbol{i} \Seq \Symbol{L} \begin{aligned}[t]
+        &\Derive \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L} \begin{aligned}[t]
+          &\Derive \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L} \Derive \dots\\
+          &\Derive \Symbol{i} \Seq \Symbol{i} \Seq \Null 
         \end{aligned}\\
-        &\Derive i \Seq \Null 
+        &\Derive \Symbol{i} \Seq \Null 
       \end{aligned}\\
       &\Derive \Null
     \end{aligned}
   \end{equation*}
-Za \ref{g:listi} so vse stavčne oblike $\{L, i \Seq L, i \Seq i \Seq L, \dots, \Null, i, i \Seq i, \dots\}$.
+Za \ref{g:listi} so vse stavčne oblike $\{\Symbol{L}, \Symbol{i} \Seq \Symbol{L}, \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L}, \dots, \Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}$.
 
   \begin{equation*}
-    E \Derive N \Seq p \Seq N \begin{aligned}[t]
-      &\Derive a \Seq p \Seq N \begin{aligned}[t]
-        &\Derive a \Seq p \Seq a\\
-        &\Derive a \Seq p \Seq b\\
+    \Symbol{E} \Derive \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} \begin{aligned}[t]
+      &\Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N} \begin{aligned}[t]
+        &\Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}\\
+        &\Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
       \end{aligned}\\
-      &\Derive b \Seq p \Seq N \begin{aligned}[t]
-        &\Derive b \Seq p \Seq a\\
-        &\Derive b \Seq p \Seq b\\
+      &\Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N} \begin{aligned}[t]
+        &\Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}\\
+        &\Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b}\\
       \end{aligned}
     \end{aligned}
   \end{equation*}
-Za \ref{g:plusab} so vse stavčne oblike $\{E, N \Seq p \Seq N, a \Seq p \Seq N, b \Seq p \Seq N, N \Seq p \Seq a, N \Seq p \Seq b, a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}$.
+Za \ref{g:plusab} so vse stavčne oblike $\{\Symbol{E}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}$.
 
 Stavki gramatike, so vsi seznami terminalnih simbolov $w \in \Kleene{\Terminals}$, kjer $\StartSymbol \DeriveStar w$.
 Seznam vseh stavkov dobimo tako, da gremo sistematično skozi vse možne izpeljave in izberemo samo tiste stavčne oblike, ki vsebujejo samo terminalne simbole.
 
 \Ex
-Za \ref{g:listi} so vsi stavki $\{\Null, i, i \Seq i, \dots\}$.
+Za \ref{g:listi} so vsi stavki $\{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}$.
 
-Za \ref{g:plusab} vsi stavki $\{a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}$.
+Za \ref{g:plusab} vsi stavki $\{\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}$.
 
 Jezik, ki ga gramatika opisuje je množica vseh stavkov:
 \begin{equation*}
@@ -168,8 +170,8 @@ Jezik, ki ga gramatika opisuje je množica vseh stavkov:
 
 \Ex
   \begin{align*}
-    \Language{\Grammar_1} &= \{\Null, i, i \Seq i, \dots\}\\
-    \Language{\Grammar_2} &= \{a \Seq p \Seq a, a \Seq p \Seq b, b \Seq p \Seq a, b \Seq p \Seq b \}
+    \Language{\Grammar_1} &= \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}\\
+    \Language{\Grammar_2} &= \{\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}
   \end{align*}
 
 \subsection{Razpoznavanje}
@@ -178,10 +180,10 @@ Preveriti želimo ali je nek seznam terminalov $u \in \Kleene{T}$ v jeziku za gr
 
 \Ex
   \begin{equation*}
-    i \Seq i \in \Language{\Grammar_1}
+    \Symbol{i} \Seq \Symbol{i} \in \Language{\Grammar_1}
   \end{equation*}
 
-  Ker $i \Seq i \in \{\Null, i, i \Seq i, \dots\}$ je odgovor v tem primeru pritrdilen.
+  Ker $\Symbol{i} \Seq \Symbol{i} \in \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}$ je odgovor v tem primeru pritrdilen.
 
 Problem je, da moramo sistematično iti skozi vse stavke.
 
@@ -191,7 +193,7 @@ Za določene jezike velja, da je na vsaki točki izpeljave možna samo ena stav�
 
 \Ex
   \begin{equation*}
-    L \Derive i \Seq L \Derive i \Seq i \Seq L \Derive i \Seq i \Seq \Null
+    \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Null
   \end{equation*}
   Torej je odgovor pritrdilen.
 
@@ -199,79 +201,79 @@ Problem nastane, ko moramo izbrati med več desnimi stranmi.
 
 \Ex
   \begin{equation*}
-    b \Seq p \Seq a \in \Language{\Grammar_2}
+    \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a} \in \Language{\Grammar_2}
   \end{equation*}
 
   \begin{equation*}
-    E \Derive N \Seq p \Seq N \begin{aligned}[t]
-      \Derive a \Seq p \Seq N\\
-      \Derive b \Seq p \Seq N
+    \Symbol{E} \Derive \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} \begin{aligned}[t]
+      \Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}\\
+      \Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}
     \end{aligned}
   \end{equation*}
 
-Tukaj imamo dve možnosti ali uporabimo $N \Arrow a$ ali pa $N \Arrow b$.
-Rešitev je, da $a \Seq p \Seq N$ in $b \Seq p \Seq N$ primerjamo s $b \Seq p \Seq a$.
-Pravilna izbira je $N \Arrow b$.
+Tukaj imamo dve možnosti ali uporabimo $\Symbol{N} \Arrow \Symbol{a}$ ali pa $\Symbol{N} \Arrow \Symbol{b}$.
+Rešitev je, da $\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}$ in $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}$ primerjamo s $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$.
+Pravilna izbira je $\Symbol{N} \Arrow \Symbol{b}$.
 
 \Ex
-V primeru, da imamo naslednjo gramatiko pa izbira več ni tako jasna:
+V primeru, da imamo naslednjo gramatiko pa izbira ni takoj jasna:
 \begin{equation*}
   \tag{$\Grammar_3$}
   \label{g:first}
   \begin{aligned}
-    S &\Arrow A \Seq C \Union B \\
-    A &\Arrow D \Union a \\
-    B &\Arrow b\\
-    C &\Arrow c \Seq d\\
-    D &\Arrow e \Union \Null
+    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \\
+    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Symbol{e} \Union \Null
   \end{aligned}
 \end{equation*}
 
 \begin{equation*}
-  S \begin{aligned}[t]
-    &\Derive A \Seq C \begin{aligned}[t]
-      &\Derive D \Seq C \begin{aligned}[t]
-        &\Derive e \Seq C \Derive e \Seq C \Derive e \Seq c \Seq d\\
-        &\Derive \Null \Seq C
+  \Symbol{S} \begin{aligned}[t]
+    &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}\\
+        &\Derive \Null \Seq \Symbol{C}
       \end{aligned}\\
-      &\Derive a \Seq C
+      &\Derive \Symbol{a} \Seq \Symbol{C}
     \end{aligned}\\
-  &\Derive B
+    &\Derive \Symbol{B}
   \end{aligned}
 \end{equation*}
 
-Zanima nas ali $e \Seq c \Seq d \in \Language{\text{\ref{g:first}}}$.
-Izpeljavo začnemo s stavčno obliko $S$, produkcija $S \Arrow A \Seq C \Union B$ ima na voljo dve desni strani.
-Pravilna je tista desna stran iz katere lahko izpeljemo $e \Seq c \Seq d$.
-Torej ali $A \Seq C \DeriveStar e \Seq c \Seq d$ ali $B \DeriveStar e \Seq c \Seq d$.
+Zanima nas ali $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}$.
+Izpeljavo začnemo s stavčno obliko $\Symbol{S}$, produkcija $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B}$ ima na voljo dve desni strani.
+Pravilna je tista desna stran iz katere lahko izpeljemo $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
+Torej ali $\Symbol{A} \Seq \Symbol{C} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ ali $\Symbol{B} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
 Problem lahko poenostavimo, tako da se odločimo tako, da primerjamo prvi terminalni simbol v vhodnem nizu, ki še ga nismo razpoznali, s terminalnimi simboli s katerimi se lahko začneta desni strani.
 To seveda deluje samo za omejen nabor gramatik.
-Torej, če $e \in \FIRST(A \Seq C)$ izberemo $A \Seq C$, če $e \in \FIRST(B)$ izberemo $B$.
-Predpostavimo, da $\FIRST(A \Seq C) = \{a, c, e\}$ in $\FIRST(B) = \{b\}$.
-V tem primeru izberemo desno stran $A \Seq C$.
+Torej, če $\Symbol{e} \in \FIRST(\Symbol{A} \Seq \Symbol{C})$ izberemo $\Symbol{A} \Seq \Symbol{C}$, če $\Symbol{e} \in \FIRST(B)$ izberemo $\Symbol{B}$.
+Predpostavimo, da $\FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}$ in $\FIRST(\Symbol{B}) = \{\Symbol{b}\}$.
+V tem primeru izberemo desno stran $\Symbol{A} \Seq \Symbol{C}$.
 
-Sedaj imamo stavčno obliko $A \Seq C$, produkcija $A \Arrow D \Union a$ ima na voljo dve desni strani.
-Če $e \in \FIRST(D)$ izberemo $D$, če $e \in \FIRST(a)$ izberemo $a$.
-Predpostavimo, da $\FIRST(D) = \{\Null, e\}$ in $\FIRST(a) = \{a\}$.
-V tem primeru izberemo desno stran $D$.
+Sedaj imamo stavčno obliko $\Symbol{A} \Seq \Symbol{C}$, produkcija $\Symbol{A} \Arrow \Symbol{D} \Union \Symbol{a}$ ima na voljo dve desni strani.
+Če $\Symbol{e} \in \FIRST(\Symbol{D})$ izberemo $\Symbol{D}$, če $\Symbol{e} \in \FIRST(\Symbol{a})$ izberemo $\Symbol{a}$.
+Predpostavimo, da $\FIRST(\Symbol{D}) = \{\Null, \Symbol{e}\}$ in $\FIRST(a) = \{\Symbol{a}\}$.
+V tem primeru izberemo desno stran $\Symbol{D}$.
 
-Sedaj imamo stavčno obliko $D \Seq C$, produkcija $D \Arrow e \Union \Null$ ima na voljo dve desni strani.
-Če $e \in \FIRST(e)$ izberemo $e$, če $e \in \FIRST(\Null)$ izberemo $\Null$.
-Predpostavimo, da $\FIRST(e) = \{e\}$ in $\FIRST(\Null) = \{\Null\}$.
-V tem primeru izberemo desno stran $e$.
-Razpoznali smo terminalen simbol $e$.
+Sedaj imamo stavčno obliko $\Symbol{D} \Seq \Symbol{C}$, produkcija $\Symbol{D} \Arrow \Symbol{e} \Union \Null$ ima na voljo dve desni strani.
+Če $\Symbol{e} \in \FIRST(\Symbol{e})$ izberemo $\Symbol{e}$, če $\Symbol{e} \in \FIRST(\Null)$ izberemo $\Null$.
+Predpostavimo, da $\FIRST(\Symbol{e}) = \{\Symbol{e}\}$ in $\FIRST(\Null) = \{\Null\}$.
+V tem primeru izberemo desno stran $\Symbol{e}$.
+Razpoznali smo terminalen simbol $\Symbol{e}$.
 
-Sedaj imamo stavčno obliko $e \Seq C$, produkcija $C \Arrow c \Seq d$ ima na voljo samo eno desno stran.
+Sedaj imamo stavčno obliko $\Symbol{e} \Seq \Symbol{C}$, produkcija $\Symbol{C} \Arrow \Symbol{c} \Seq \Symbol{d}$ ima na voljo samo eno desno stran.
 Potem odločanje ni potrebno.
-Razpoznali smo še terminalna simbola $c$ in $d$.
+Razpoznali smo še terminalna simbola $\Symbol{c}$ in $\Symbol{d}$.
 
-Sedaj smo prišli do stavka $e \Seq c \Seq d$.
-Uspelo nam je izpeljati $e \Seq c \Seq d$, torej ${e \Seq c \Seq d \in \Language{\text{\ref{g:first}}}}$.
+Sedaj smo prišli do stavka $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
+Uspelo nam je izpeljati $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$, torej ${\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}}$.
 
 V nadaljevanju bo opisano kako izračunamo množico $\FIRST$.
 Prav tako, bomo potrebovali še množico $\FOLLOW$, v primeru ko je mogoče iz ene izmed desnih strani izpeljati $\Null$.
-Pri gramatiki \ref{g:first} je bilo to pri stavčnih oblikah $A \Seq C$ in $D \Seq C$, vendar pri $e \Seq c \Seq d$ nismo imeli problemov.
-Drugače bi bilo, če nas bi zanimalo ali $c \Seq d \in \Language{\text{\ref{g:first}}}$.
+Pri gramatiki \ref{g:first} je bilo to pri stavčnih oblikah $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{D} \Seq \Symbol{C}$, vendar pri $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ nismo imeli problemov.
+Drugače bi bilo, če nas bi zanimalo ali $\Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}$.
 
 \section{\FIRST}
 
@@ -286,38 +288,38 @@ Torej začnemo z $\alpha$ in sistematično zamenjujemo prvi neterminalen simbol 
 \Ex
 \begin{equation*}
   \begin{aligned}
-    S &\Arrow A \Seq C \Union B \\
-    A &\Arrow D \Union a \\
-    B &\Arrow b\\
-    C &\Arrow c \Seq d\\
-    D &\Arrow e \Union \Null
+    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \\
+    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Symbol{e} \Union \Null
   \end{aligned}
 \end{equation*}
 
 \begin{equation*}
-  A \Seq C \begin{aligned}[t]
-    &\Derive D \Seq C \begin{aligned}[t]
-      &\Derive e \Seq C \Derive e \Seq C \\
-      &\Derive \Null \Seq C \Derive c \Seq d \\
+  \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+    &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+      &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
     \end{aligned}\\
-    &\Derive a \Seq C
+    &\Derive \Symbol{a} \Seq \Symbol{C}
   \end{aligned}
 \end{equation*}
 
-Prvi neterminalen simbol je $A$.
-Prva opcija je, da uporabimo $A \Arrow D$.
-Na začetku imamo neterminalen simbol $D$.
-Prva opcija je, da uporabimo $D \Arrow e$.
-Na začetku imamo terminalen simbol $e$.
-Druga opcija je, da uporabimo $D \Arrow \Null$.
+Prvi neterminalen simbol je $\Symbol{A}$.
+Prva opcija je, da uporabimo $\Symbol{A} \Arrow \Symbol{D}$.
+Na začetku imamo neterminalen simbol $\Symbol{D}$.
+Prva opcija je, da uporabimo $\Symbol{D} \Arrow \Symbol{e}$.
+Na začetku imamo terminalen simbol $\Symbol{e}$.
+Druga opcija je, da uporabimo $\Symbol{D} \Arrow \Null$.
 Na začetku imamo neterminalen simbol $C$.
-Uporabimo $C \Arrow c \Seq d$ in ga zamenjamo s $c \Seq d$.
-Na začetku imamo terminalen simbol $c$.
-Druga opcija je, da uporabimo $A \Arrow a$.
-Na začetku imamo terminalen simbol $a$.
-Prvi terminalni simboli so torej $a$, $c$ in $e$:
+Uporabimo $\Symbol{C} \Arrow \Symbol{c} \Seq \Symbol{d}$ in ga zamenjamo s $\Symbol{c} \Seq \Symbol{d}$.
+Na začetku imamo terminalen simbol $\Symbol{c}$.
+Druga opcija je, da uporabimo $\Symbol{A} \Arrow \Symbol{a}$.
+Na začetku imamo terminalen simbol $\Symbol{a}$.
+Prvi terminalni simboli so torej $\Symbol{a}$, $\Symbol{c}$ in $\Symbol{e}$:
 \begin{equation*}
-  \FIRST(A \Seq C) = \{a, c, e\}
+  \FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
 \Special{Poseben primer:} Če je $\alpha$ enak $\Null$ ${(\alpha = \Null)}$, potem je $\FIRST$ $\Null$:
@@ -341,44 +343,44 @@ Prvi terminalni simboli so torej $a$, $c$ in $e$:
 Ko iščemo $\FIRST(A)$, po splošni definiciji $A$ sistematično zamenjamo z desnimi desnimi stranmi $\gamma, \dots, \eta$ in postopek ponovimo za vsako desno stran, torej poiščemo $\FIRST(\gamma), \dots, \FIRST(\eta)$ in jih nato združimo.
 
 \Ex
-Če uporabimo splošno definicijo lahko $\FIRST(S)$ izračunamo tako:
+Če uporabimo splošno definicijo lahko $\FIRST(\Symbol{S})$ izračunamo tako:
 \begin{equation*}
   S \begin{aligned}[t]
-    &\Derive A \Seq C \begin{aligned}[t]
-      &\Derive D \Seq C \begin{aligned}[t]
-        &\Derive e \Seq C \Derive e \Seq C \\
-        &\Derive \Null \Seq C \Derive c \Seq d \\
+    &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+        &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
       \end{aligned}\\
-      &\Derive a \Seq C
+      &\Derive \Symbol{a} \Seq \Symbol{C}
     \end{aligned}\\
-  &\Derive B \Derive b
+    &\Derive \Symbol{B} \Derive \Symbol{b}
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(S) = \{a, b, c, e\}
+  \FIRST(S) = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
-Lahko pa $\FIRST(S)$, razbijemo na $\FIRST(A \Seq C)$ in $\FIRST(B)$, ker $S \Arrow A \Seq C \Union B$, izračunamo vsakega posamezno in ju združimo:
+Lahko pa $\FIRST(\Symbol{S})$, razbijemo na $\FIRST(\Symbol{A} \Seq \Symbol{C})$ in $\FIRST(\Symbol{B})$, ker $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B}$, izračunamo vsakega posamezno in ju združimo:
 \begin{equation*}
-  \FIRST(S) = \FIRST(A \Seq C) \cup \FIRST(B)
+  \FIRST(\Symbol{S}) = \FIRST(\Symbol{A} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B})
 \end{equation*}
-$\FIRST(A \Seq C)$, smo izračunali že zgoraj:
+$\FIRST(\Symbol{A} \Seq \Symbol{C})$, smo izračunali že zgoraj:
 \begin{equation*}
-  \FIRST(A \Seq C) = \{a, c, e\}
-\end{equation*}
-
-Izračunamo še $\FIRST(B)$ :
-\begin{equation*}
-  B \Derive b
-\end{equation*}
-\begin{equation*}
-  \FIRST(B) = \{b\}
+  \FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
-Obe množici nato združimo in dobimo $\FIRST(S)$:
+Izračunamo še $\FIRST(\Symbol{B})$ :
+\begin{equation*}
+  \Symbol{B} \Derive \Symbol{b}
+\end{equation*}
+\begin{equation*}
+  \FIRST(\Symbol{B}) = \{\Symbol{b}\}
+\end{equation*}
+
+Obe množici nato združimo in dobimo $\FIRST(\Symbol{S})$:
 \begin{align*}
-  \FIRST(S) &= \{a, c, e\} \cup \{b\}\\
-  \FIRST(S) &= \{a, b, c, e\}
+  \FIRST(S) &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\}\\
+  \FIRST(S) &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{align*}
 
 Definicijo lahko razširimo na množico seznamov neterminalnih in terminalnih simbolov:
@@ -393,49 +395,49 @@ To pomeni, da se lahko ustavimo na katerem koli koraku izpeljave $\alpha \Derive
 \end{equation*}
 
 \Ex
-  Iz $S$ lahko izpeljemo $A \Seq C$ in $B$, torej lahko izračunamo $\FIRST$ za vsakega posebej.
+  Iz $\Symbol{S}$ lahko izpeljemo $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{B}$, torej lahko izračunamo $\FIRST$ za vsakega posebej.
   \begin{align*}
-    S &\Derive A \Seq C\\
-    S &\Derive B
+    \Symbol{S} &\Derive \Symbol{A} \Seq \Symbol{C}\\
+    \Symbol{S} &\Derive \Symbol{B}
   \end{align*}
   Lahko vidimo, da je razširitev konsistentna z definicijo za produkcijo.
   \begin{align*}
-    \FIRST(S) &= \FIRST(\{A \Seq C, B\}) \\
-              &= \FIRST(A \Seq C) \cup \FIRST(B)\\
-              &= \{a, c, e\} \cup \{b\} \\
-              &= \{a, b, c, e\}
+    \FIRST(\Symbol{S}) &= \FIRST(\{\Symbol{A} \Seq \Symbol{C}, \Symbol{B}\}) \\
+              &= \FIRST(\Symbol{A} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B})\\
+              &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\} \\
+              &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
   \end{align*}
 
-  Izpeljavo iz $S$ lahko nadaljujemo do $C \Seq C, D \Seq C, a \Seq C, B$ (ustavimo se lahko kjer koli):
+  Izpeljavo iz $\Symbol{S}$ lahko nadaljujemo do $\Symbol{C} \Seq \Symbol{C}, \Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{C}, \Symbol{B}$ (ustavimo se lahko kjer koli):
   \begin{equation*}
     S \begin{aligned}[t]
-      &\Derive A \Seq C \begin{aligned}[t]
-        &\Derive D \Seq C\\
-        &\Derive a \Seq C
+      &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+        &\Derive \Symbol{D} \Seq \Symbol{C}\\
+        &\Derive \Symbol{a} \Seq \Symbol{C}
       \end{aligned}\\
-    &\Derive B
+      &\Derive \Symbol{B}
     \end{aligned}
   \end{equation*}
-  Nato izračunamo $\FIRST$ posebej za vsak $C \Seq C, D \Seq C, a \Seq C, B$ in jih združimo:
+  Nato izračunamo $\FIRST$ posebej za vsak $\Symbol{C} \Seq \Symbol{C}, \Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{C}, \Symbol{B}$ in jih združimo:
   \begin{align*}
-    \FIRST(S) &= \FIRST(\{D \Seq C, a \Seq C, B\}) \\
-              &= \FIRST(D \Seq C) \cup \FIRST(a \Seq C) \cup \FIRST(B)
+    \FIRST(\Symbol{S}) &= \FIRST(\{\Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{C}, \Symbol{B}\}) \\
+              &= \FIRST(\Symbol{D} \Seq \Symbol{C}) \cup \FIRST(\Symbol{a} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B})
   \end{align*}
-  $\FIRST(B)$ smo izračunali že zgoraj, $\FIRST(a \Seq C) = \{a\}$.
-  Izračunamo še $\FIRST(D \Seq C)$:
+  $\FIRST(B)$ smo izračunali že zgoraj, $\FIRST(\Symbol{a} \Seq \Symbol{C}) = \{\Symbol{a}\}$.
+  Izračunamo še $\FIRST(\Symbol{D} \Seq \Symbol{C})$:
   \begin{equation*}
-    D \Seq C \begin{aligned}[t]
-      &\Derive e \Seq C \Derive e \Seq C \\
-      &\Derive \Null \Seq C \Derive c \Seq d \\
+    \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+      &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
     \end{aligned}
   \end{equation*}
   \begin{equation*}
-    \FIRST(D \Seq C) = \{e, c\}
+    \FIRST(\Symbol{D} \Seq \Symbol{C}) = \{\Symbol{e}, \Symbol{c}\}
   \end{equation*}
-  Nato rezultate združimo in dobimo $\FIRST(S)$:
+  Nato rezultate združimo in dobimo $\FIRST(\Symbol{S})$:
   \begin{align*}
-    \FIRST(S) &= \{e, c\} \cup \{a\} \cup \{b\} \\
-              &= \{a, b, c, e\}
+    \FIRST(S) &= \{\Symbol{e}, \Symbol{c}\} \cup \{\Symbol{a}\} \cup \{\Symbol{b}\} \\
+              &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
   \end{align*}
 
 Če seznam $\alpha$ razdelimo na glavo $X$ in rep $\gamma$ seznama ${(\alpha = X \Seq \gamma)}$, dobimo pravilo:
@@ -457,42 +459,42 @@ V primeru, da $\varepsilon \in \FIRST(A)$, potem so lahko na začetku tudi termi
 Torej, ko $a = \Null$ potem imamo na začetku seznama $b$, ker $a \Seq b = \Null \Seq b = b$.
 
 \Ex
-  Ko izpeljujemo iz $D \Seq C$, se lahko zgodi, da $\Null \in \FIRST(D)$, takrat je na začetku $c \in \FIRST(C)$:
+  Ko izpeljujemo iz $\Symbol{D} \Seq \Symbol{C}$, se lahko zgodi, da $\Null \in \FIRST(\Symbol{D})$, takrat je na začetku $\Symbol{c} \in \FIRST(\Symbol{C})$:
   \begin{equation*}
-    D \Seq C \begin{aligned}[t]
-      &\Derive e \Seq C \Derive e \Seq C \\
-      &\Derive \Null \Seq C \Derive c \Seq d \\
+    \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+      &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
     \end{aligned}
   \end{equation*}
   \begin{equation*}
-    \FIRST(D \Seq C) = \{e, c\}
+    \FIRST(\Symbol{D} \Seq \Symbol{C}) = \{\Symbol{e}, \Symbol{c}\}
   \end{equation*}
 
   Enako dobimo če uporabimo pravilo.
-  Najprej izračunajmo $\FIRST(C)$:
+  Najprej izračunajmo $\FIRST(\Symbol{C})$:
   \begin{equation*}
-    \FIRST(C) = \FIRST(c \Seq d) = \FIRST(\FIRST(c) \Seq \FIRST(d)) = \{c\}
+    \FIRST(\Symbol{C}) = \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\}
   \end{equation*}
   \begin{equation*}
     \FIRST(C) = \{c\}
   \end{equation*}
-  Nato izračunamo $\FIRST(D \Seq C)$ in dobimo enako:
+  Nato izračunamo $\FIRST(\Symbol{D} \Seq \Symbol{C})$ in dobimo enako:
   \begin{equation*}
     \begin{aligned}
-      \FIRST(D \Seq C) &= \FIRST(\FIRST(D) \Seq \FIRST(C))\\
-                &= \FIRST(\{\Null, e\} \Seq \{c\})\\
-                &= \FIRST(\{\Null \Seq c, e \Seq c\})\\
-                &= \FIRST(\Null \Seq c) \cup \FIRST(e \Seq c)\\
-                &= \FIRST(c) \cup \FIRST(e)\\
-                &= \{c\} \cup \{e\}\\
-                &= \{c, e\}
+      \FIRST(\Symbol{D} \Seq \Symbol{C}) &= \FIRST(\FIRST(\Symbol{D}) \Seq \FIRST(\Symbol{C}))\\
+                &= \FIRST(\{\Null, \Symbol{e}\} \Seq \{\Symbol{c}\})\\
+                &= \FIRST(\{\Null \Seq \Symbol{c}, \Symbol{e} \Seq \Symbol{c}\})\\
+                &= \FIRST(\Null \Seq \Symbol{c}) \cup \FIRST(\Symbol{e} \Seq \Symbol{c})\\
+                &= \FIRST(\Symbol{c}) \cup \FIRST(\Symbol{e})\\
+                &= \{\Symbol{c}\} \cup \{\Symbol{e}\}\\
+                &= \{\Symbol{c}, \Symbol{e}\}
     \end{aligned}
   \end{equation*}
   \begin{equation*}
-    \FIRST(D \Seq C) = \{e, c\}
+    \FIRST(\Symbol{D} \Seq \Symbol{C}) = \{\Symbol{e}, \Symbol{c}\}
   \end{equation*}
 
-Druga interpretacija je:
+  Druga interpretacija je:
 \begin{equation*}
   \FIRST(A \Seq \gamma) = \begin{cases}
     (\FIRST(A) - \Null) \cup \FIRST(\gamma) & \text{če } A \DeriveStar \Null \\
@@ -502,13 +504,13 @@ Druga interpretacija je:
 Obrazložitev je enaka, ko $\Null \in \FIRST(A)$, lahko imamo na začetku terminalne simbole iz $\FIRST(\gamma)$, torej lahko odstranimo $\Null$ iz $\FIRST(A)$ in dodamo terminalne simbole iz $\FIRST(\gamma)$.
 
 \Ex
-  $\FIRST(D \Seq C)$ lahko izračunamo tudi tako (ker $D \DeriveStar \Null$):
+  $\FIRST(\Symbol{D} \Seq \Symbol{C})$ lahko izračunamo tudi tako (ker $\Symbol{D} \DeriveStar \Null$):
   \begin{equation*}
     \begin{aligned}
-      \FIRST(D \Seq C) &= (\FIRST(D) - \Null) \cup \FIRST(C)\\
-                &= (\{\Null, e\} - \Null) \cup \{c\})\\
-                &= \{e\} \cup \{c\}\\
-                &= \{c, e\}
+      \FIRST(\Symbol{D} \Seq \Symbol{C}) &= (\FIRST(\Symbol{D}) - \Null) \cup \FIRST(\Symbol{C})\\
+                &= (\{\Null, \Symbol{e}\} - \Null) \cup \{\Symbol{c}\})\\
+                &= \{\Symbol{e}\} \cup \{\Symbol{c}\}\\
+                &= \{\Symbol{c}, \Symbol{e}\}
     \end{aligned}
   \end{equation*}
 
@@ -520,123 +522,123 @@ Vrstni red računanja je določen tako: Najprej izračunamo $\FIRST$ za terminal
 \Ex
 \begin{equation*}
   \begin{aligned}
-    S &\Arrow A \Seq C \Union B \\
-    A &\Arrow D \Union a \\
-    B &\Arrow b\\
-    C &\Arrow c \Seq d\\
-    D &\Arrow e \Union \Null
+    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \\
+    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Symbol{e} \Union \Null
   \end{aligned}
 \end{equation*}
-Terminalni simboli v tej gramatiki so $a, b, c, d, e$, torej:
+Terminalni simboli v tej gramatiki so $\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{d}, \Symbol{e}$, torej:
 \begin{align*}
-  \FIRST(a) = \{a\}\\
-  \FIRST(b) = \{b\}\\
-  \FIRST(c) = \{c\}\\
-  \FIRST(d) = \{d\}\\
-  \FIRST(e) = \{e\}
+  \FIRST(\Symbol{a}) = \{\Symbol{a}\}\\
+  \FIRST(\Symbol{b}) = \{\Symbol{b}\}\\
+  \FIRST(\Symbol{c}) = \{\Symbol{c}\}\\
+  \FIRST(\Symbol{d}) = \{\Symbol{d}\}\\
+  \FIRST(\Symbol{e}) = \{\Symbol{e}\}
 \end{align*}
 Potem izračunamo $\FIRST$ za vse desne strani po omenjenem vrstnem redu:
 \begin{align*}
-  \FIRST(c \Seq d) &= \FIRST(\FIRST(c) \Seq \FIRST(d)) = \FIRST(c) = \{c\} \\
-  \FIRST(C) &= \FIRST(c \Seq d) = \{c\} \\
-  \FIRST(D) &= \FIRST(e) \cup \FIRST(\Null) \\
-            &= \{e\} \cup \{\Null\} = \{e, \Null\} \\
-  \FIRST(A) &= \FIRST(D) \cup \FIRST(a) \\
-            &= \{e, \Null\} \cup \{a\} = \{\Null, a, c, e\} \\
-  \FIRST(A \Seq C) &= \FIRST(A \Seq C) \\
-            &= \FIRST(\FIRST(A) \Seq \FIRST(C)) \\
-            &= \FIRST(\{a, c, e, \Null\} \Seq \{c\})\\
-            &= \FIRST(\{a \Seq c, c \Seq c, e \Seq c, \Null \Seq c\})\\
-            &= \FIRST(a \Seq c) \cup \FIRST(c \Seq c) \cup \FIRST(e \Seq c) \cup \FIRST(\Null \Seq c)\\
-            &= \FIRST(a) \cup \FIRST(c) \cup \FIRST(e) \cup \FIRST(c) \\
-            &= \{a\} \cup \{c\} \cup \{e\} \cup \{c\}\\
-            &= \{a, c, e\}\\
-  \FIRST(A \Seq C) &= \FIRST(A \Seq C) \\
-            &= (\FIRST(A) - \Null) \cup \FIRST(C) \\
-            &= (\{\Null, a, c, e\} - \Null) \cup \{c\} \\
-            &= \{a, c, e\} \cup \{c\}\\
-            &= \{a, c, e\}\\
-  \FIRST(B) &= \FIRST(b) = \{b\}
+  \FIRST(\Symbol{c} \Seq \Symbol{d}) &= \FIRST(c) = \{\Symbol{c}\} \\
+  \FIRST(\Symbol{C}) &= \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\} \\
+  \FIRST(\Symbol{D}) &= \FIRST(\Symbol{e}) \cup \FIRST(\Null) \\
+            &= \{\Symbol{e}\} \cup \{\Null\} = \{\Symbol{e}, \Null\} \\
+  \FIRST(\Symbol{A}) &= \FIRST(\Symbol{D}) \cup \FIRST(\Symbol{a}) \\
+            &= \{\Symbol{e}, \Null\} \cup \{\Symbol{a}\} = \{\Null, \Symbol{a}, \Symbol{c}, \Symbol{e}\} \\
+  \FIRST(\Symbol{A} \Seq \Symbol{C}) &= \FIRST(\Symbol{A} \Seq \Symbol{C}) \\
+            &= \FIRST(\FIRST(\Symbol{A}) \Seq \FIRST(\Symbol{C})) \\
+            &= \FIRST(\{\Symbol{a}, \Symbol{c}, \Symbol{e}, \Null\} \Seq \{\Symbol{c}\})\\
+            &= \FIRST(\{\Symbol{a} \Seq \Symbol{c}, \Symbol{c} \Seq \Symbol{c}, \Symbol{e} \Seq \Symbol{c}, \Null \Seq \Symbol{c}\})\\
+            &= \FIRST(\Symbol{a} \Seq \Symbol{c}) \cup \FIRST(\Symbol{c} \Seq \Symbol{c}) \cup \FIRST(\Symbol{e} \Seq \Symbol{c}) \cup \FIRST(\Null \Seq \Symbol{c})\\
+            &= \FIRST(\Symbol{a}) \cup \FIRST(\Symbol{c}) \cup \FIRST(\Symbol{e}) \cup \FIRST(\Symbol{c}) \\
+            &= \{\Symbol{a}\} \cup \{\Symbol{c}\} \cup \{\Symbol{e}\} \cup \{\Symbol{c}\}\\
+            &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}\\
+  \FIRST(\Symbol{A} \Seq \Symbol{C}) &= \FIRST(\Symbol{A} \Seq \Symbol{C}) \\
+            &= (\FIRST(\Symbol{A}) - \Null) \cup \FIRST(\Symbol{C}) \\
+            &= (\{\Null, \Symbol{a}, \Symbol{c}, \Symbol{e}\} - \Null) \cup \{\Symbol{c}\} \\
+            &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{c}\}\\
+            &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}\\
+  \FIRST(\Symbol{B}) &= \FIRST(\Symbol{b}) = \{\Symbol{b}\}
 \end{align*}
 
 Izračunamo lahko tudi $\FIRST(S)$ vendar, ga za implementacijo razpoznavalnika ne potrebujemo:
 \begin{align*}
-  \FIRST(S) &= \FIRST(A \Seq C) \cup \FIRST(B) \\
-            &= \{a, c, e\} \cup \{b\} = \{a, b, c, e\}
+  \FIRST(\Symbol{S}) &= \FIRST(\Symbol{A} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B}) \\
+            &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\} = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{align*}
 
 V vseh primerih dobimo enako, kot z uporabo splošne definicije:
 \begin{equation*}
-  c \Seq d
+  \Symbol{c} \Seq \Symbol{d}
 \end{equation*}
 \begin{equation*}
-  \FIRST(c \Seq d) = \{c\}
-\end{equation*}
-
-\begin{equation*}
-  C \Derive c \Seq d
-\end{equation*}
-\begin{equation*}
-  \FIRST(C) = \{c\}
+  \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\}
 \end{equation*}
 
 \begin{equation*}
-  D \begin{aligned}[t]
+  \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d}
+\end{equation*}
+\begin{equation*}
+  \FIRST(\Symbol{C}) = \{\Symbol{c}\}
+\end{equation*}
+
+\begin{equation*}
+  \Symbol{D} \begin{aligned}[t]
     &\Derive \Null\\
-    &\Derive e\\
+    &\Derive \Symbol{e}\\
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(D) = \{\Null, e\}
+  \FIRST(\Symbol{D}) = \{\Null, \Symbol{e}\}
 \end{equation*}
 
 \begin{equation*}
-  A \begin{aligned}[t]
-    &\Derive D \begin{aligned}[t]
-      &\Derive e \\
+  \Symbol{A} \begin{aligned}[t]
+    &\Derive \Symbol{D} \begin{aligned}[t]
+      &\Derive \Symbol{e} \\
       &\Derive \Null\\
     \end{aligned}\\
-    &\Derive a
+    &\Derive \Symbol{a}
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(A) = \{\Null, a, e\}
+  \FIRST(\Symbol{A}) = \{\Null, \Symbol{a}, \Symbol{e}\}
 \end{equation*}
 
 \begin{equation*}
-  A \Seq C \begin{aligned}[t]
-    &\Derive D \Seq C \begin{aligned}[t]
-      &\Derive e \Seq C \Derive e \Seq C \\
-      &\Derive \Null \Seq C \Derive c \Seq d \\
+  \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+    &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+      &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
     \end{aligned}\\
-    &\Derive a \Seq C
+    &\Derive \Symbol{a} \Seq \Symbol{C}
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(A \Seq C) = \{a, c, e\}
+  \FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
 \begin{equation*}
-  B \Derive b
+  \Symbol{B} \Derive \Symbol{b}
 \end{equation*}
 \begin{equation*}
-  \FIRST(B) = \{b\}
+  \FIRST(\Symbol{B}) = \{\Symbol{b}\}
 \end{equation*}
 
 \begin{equation*}
-  S \begin{aligned}[t]
-    &\Derive A \Seq C \begin{aligned}[t]
-      &\Derive D \Seq C \begin{aligned}[t]
-        &\Derive e \Seq C \Derive e \Seq C \\
-        &\Derive \Null \Seq C \Derive c \Seq d \\
+  \Symbol{S} \begin{aligned}[t]
+    &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \\
+        &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \\
       \end{aligned}\\
-      &\Derive a \Seq C
+      &\Derive \Symbol{a} \Seq \Symbol{C}
     \end{aligned}\\
-  &\Derive B \Derive b
+    &\Derive \Symbol{B} \Derive \Symbol{b}
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(S) = \{a, b, c, e\}
+  \FIRST(\Symbol{S}) = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
 \subsection*{Primeri}
@@ -645,42 +647,42 @@ V vseh primerih dobimo enako, kot z uporabo splošne definicije:
 \Ex
   \begin{equation*}
   \begin{aligned}
-    S &\Arrow A \Seq C \Union B \\
-    A &\Arrow D \Union a \\
-    B &\Arrow b\\
-    C &\Arrow c \Seq d\\
-    D &\Arrow e \Union \Null
+    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \\
+    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Symbol{e} \Union \Null
   \end{aligned}
 \end{equation*}
 
 Tokrat bomo $S$ pred začetkom izpeljave dodali $\EOF$.
 To je zato, ker $S$ konceptualno sledi $\EOF$ in se zato pojavi v množicah $\FOLLOW$.
 \begin{equation*}
-  S \Seq \EOF \begin{aligned}[t]
-    &\Derive A \Seq C \Seq \EOF \begin{aligned}[t]
-      &\Derive D \Seq C \Seq \EOF \begin{aligned}[t]
-        &\Derive e \Seq C \Seq \EOF\\
-        &\Derive \Null \Seq C \Derive c \Seq d \Seq \EOF
+  \Symbol{S} \Seq \EOF \begin{aligned}[t]
+    &\Derive \Symbol{A} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Seq \EOF\\
+        &\Derive \Null \Seq \Symbol{C} \Derive \Symbol{c} \Seq \Symbol{d} \Seq \EOF
       \end{aligned}\\
-      &\Derive a \Seq C \Seq \EOF
+      &\Derive \Symbol{a} \Seq \Symbol{C} \Seq \EOF
     \end{aligned}\\
-  &\Derive B \Seq \EOF
+    &\Derive \Symbol{B} \Seq \EOF
   \end{aligned}
 \end{equation*}
 
-Zanima nas ali $c \Seq d \in \Language{\text{\ref{g:first}}}$.
-Izpeljavo začnemo s stavčno obliko $S \Seq \EOF$, produkcija $S \Arrow A \Seq C \Union B$ ima na voljo dve desni strani.
-Če $c \in \FIRST(A \Seq C)$ izberemo $A \Seq C$, če $c \in \FIRST(B)$ izberemo $B$.
-Sedaj vemo, da $\FIRST(A \Seq C) = \{a, c, e\}$ in $\FIRST(B) = \{b\}$.
-V tem primeru izberemo desno stran $A \Seq C$.
+Zanima nas ali $\Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}$.
+Izpeljavo začnemo s stavčno obliko $\Symbol{S} \Seq \EOF$, produkcija $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B}$ ima na voljo dve desni strani.
+Če $\Symbol{c} \in \FIRST(\Symbol{A} \Seq \Symbol{C})$ izberemo $\Symbol{A} \Seq \Symbol{C}$, če $\Symbol{c} \in \FIRST(\Symbol{B})$ izberemo $\Symbol{B}$.
+Sedaj vemo, da $\FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}$ in $\FIRST(\Symbol{B}) = \{\Symbol{b}\}$.
+V tem primeru izberemo desno stran $\Symbol{A} \Seq \Symbol{C}$.
 
-Sedaj imamo stavčno obliko $A \Seq C \Seq \EOF$, produkcija $A \Arrow D \Union a$ ima na voljo dve desni strani.
-Če $c \in \FIRST(D)$ izberemo $D$, če $c \in \FIRST(a)$ izberemo $a$.
-Sedaj vemo, da $\FIRST(D) = \{\Null, e\}$ in $\FIRST(a) = \{a\}$.
-Tukaj na letimo na problem, ker $c \notin \FIRST(D)$.
+Sedaj imamo stavčno obliko $\Symbol{A} \Seq \Symbol{C} \Seq \EOF$, produkcija $\Symbol{A} \Arrow \Symbol{D} \Union \Symbol{a}$ ima na voljo dve desni strani.
+Če $c \in \FIRST(\Symbol{D})$ izberemo $\Symbol{D}$, če $\Symbol{c} \in \FIRST(\Symbol{a})$ izberemo $\Symbol{a}$.
+Sedaj vemo, da $\FIRST(\Symbol{D}) = \{\Null, \Symbol{e}\}$ in $\FIRST(\Symbol{a}) = \{\Symbol{a}\}$.
+Tukaj na letimo na problem, ker $\Symbol{c} \notin \FIRST(\Symbol{D})$.
 
-Če pogledamo stavčno obliko $A \Seq C \Seq \EOF$, vidimo, da v primeru $A \DeriveStar \varepsilon$ sledi $C \Seq \EOF$, torej bo na začetku $\FIRST(C \Seq \EOF)$.
-Rešitev problema je torej, da se odločimo na podlagi simbolov, ki sledijo $A$, torej $\FOLLOW(A)$.
+Če pogledamo stavčno obliko $A \Seq \Symbol{C} \Seq \EOF$, vidimo, da v primeru $\Symbol{A} \DeriveStar \varepsilon$ sledi $\Symbol{C} \Seq \EOF$, torej bo na začetku $\FIRST(\Symbol{C} \Seq \EOF)$.
+Rešitev problema je torej, da se odločimo na podlagi simbolov, ki sledijo $\Symbol{A}$, torej $\FOLLOW(\Symbol{A})$.
 
 Trenutna definicija $\FOLLOW$ je odvisna od trenutne stavčne oblike.
 Enako, kot $\FIRST$ želimo $\FOLLOW$ izračunati v naprej.
@@ -692,20 +694,21 @@ Rešitev problema je, da $\FOLLOW$ izračunamo za vse možne stavčne oblike:
 \end{align*}
 Po konvenciji je vedno $\FOLLOW(S) = \{\EOF\}$ (zato je bilo smiselno, da smo dodali $\EOF$ pri izpeljavi).
 
-V primeru, se $A$ lahko pojavi samo v eni stavčni obliki $A \Seq C \Seq \EOF$, torej:
+\Ex
+V primeru, se $\Symbol{A}$ lahko pojavi samo v eni stavčni obliki $\Symbol{A} \Seq \Symbol{C} \Seq \EOF$, torej:
 \begin{align*}
-  \FOLLOW(A) &= \FIRST(C \Seq \EOF) \\
-             &= \FIRST(\FIRST(C) \Seq \FIRST(\EOF))\\
-             &= \FIRST(\{c\} \Seq \{\EOF\})\\
-             &= \FIRST(\{c \Seq \EOF\})\\
-             &= \FIRST(c \Seq \EOF) \\
-             &= \FIRST(c)\\
-             &= \{c\}
+  \FOLLOW(\Symbol{A}) &= \FIRST(\Symbol{C} \Seq \EOF) \\
+             &= \FIRST(\FIRST(\Symbol{C}) \Seq \FIRST(\EOF))\\
+             &= \FIRST(\{\Symbol{c}\} \Seq \{\EOF\})\\
+             &= \FIRST(\{\Symbol{c} \Seq \EOF\})\\
+             &= \FIRST(\Symbol{c} \Seq \EOF) \\
+             &= \FIRST(\Symbol{c})\\
+             &= \{\Symbol{c}\}
 \end{align*}
 
-$\FOLLOW$ lahko definiramo tudi na podlagi vseh produkcij oblike ${B \Arrow \gamma \Seq A \Seq \eta}$:
+$\FOLLOW$ lahko definiramo tudi na podlagi vseh produkcij:
 \begin{align*}
-  \FOLLOW(A) &= \bigcup_{B \Arrow \gamma \Seq A \Seq \eta} \FIRST(\FIRST(\eta) \Seq \FOLLOW(B))
+  \FOLLOW(A) &= \bigcup_{B \Arrow \gamma \Seq A \Seq \eta \in \Productions} \FIRST(\FIRST(\eta) \Seq \FOLLOW(B))
 \end{align*}
 O smiselnosti tej definicije se lahko prepričamo tako:
 Recimo, da imamo dve produkciji $S \Arrow \sigma \Seq B \Seq \tau$ in $B \Arrow \gamma \Seq A \Seq \eta$.
@@ -724,87 +727,87 @@ Torej $S$ sledi $\EOF$, $B$ sledi $\tau \Seq \EOF$, torej $\tau$ in to kar sledi
 \end{align*}
 Torej dobimo enako, kot pri izpeljavi.
 
-V primeru, se $A$ pojavi samo v produkciji $S \Arrow A \Seq C$, torej:
+V primeru, se $\Symbol{A}$ pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C}$, torej:
 \begin{align*}
-  \FOLLOW(A) &= \FIRST(\FIRST(C) \Seq \FOLLOW(S)) \\
-             &= \FIRST(\{c\} \Seq \{\EOF\})\\
-             &= \FIRST(\{c \Seq \EOF\})\\
-             &= \FIRST(c \Seq \EOF) \\
-             &= \FIRST(c) \\
-             &= \{c\}
+  \FOLLOW(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{C}) \Seq \FOLLOW(\Symbol{S})) \\
+             &= \FIRST(\{\Symbol{c}\} \Seq \{\EOF\})\\
+             &= \FIRST(\{\Symbol{c} \Seq \EOF\})\\
+             &= \FIRST(\Symbol{c} \Seq \EOF) \\
+             &= \FIRST(\Symbol{c}) \\
+             &= \{\Symbol{c}\}
 \end{align*}
 
 Podobno lahko izračunamo še za ostale neterminalne simbole:
 \begin{align*}
-  \FOLLOW(B) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(S)) \\
+  \FOLLOW(\Symbol{B}) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{S})) \\
              &= \FIRST(\{\Null\} \Seq \{\EOF\})\\
              &= \FIRST(\{\Null \Seq \EOF\})\\
              &= \FIRST(\EOF) \\
              &= \{\EOF\}
 \end{align*}
 \begin{align*}
-  \FOLLOW(C) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(S)) \\
+  \FOLLOW(\Symbol{C}) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{S})) \\
              &= \FIRST(\{\Null\} \Seq \{\EOF\})\\
              &= \FIRST(\{\Null \Seq \EOF\})\\
              &= \FIRST(\EOF) \\
              &= \{\EOF\}
 \end{align*}
 \begin{align*}
-  \FOLLOW(D) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(A)) \\
-             &= \FIRST(\{\Null\} \Seq \{c\})\\
-             &= \FIRST(\{\Null \Seq c\})\\
-             &= \FIRST(c) \\
-             &= \{c\}
+  \FOLLOW(\Symbol{D}) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{A})) \\
+             &= \FIRST(\{\Null\} \Seq \{\Symbol{c}\})\\
+             &= \FIRST(\{\Null \Seq \Symbol{c}\})\\
+             &= \FIRST(\Symbol{c}) \\
+             &= \{\Symbol{c}\}
 \end{align*}
 
 Lahko pa uporabimo tudi definicijo na podlagi stavčnih oblik.
 \begin{equation*}
   S \Seq \EOF \begin{aligned}[t]
-    &\Derive A \Seq C \Seq \EOF \begin{aligned}[t]
-      &\Derive D \Seq C \Seq \EOF \begin{aligned}[t]
-        &\Derive e \Seq C \Seq \EOF \Derive e \Seq c \Seq d \Seq \EOF \\
-        &\Derive \Null \Seq C \Seq \EOF \Derive c \Seq d \Seq \EOF \\
+    &\Derive \Symbol{A} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Seq \EOF \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \Seq \EOF \\
+        &\Derive \Null \Seq \Symbol{C} \Seq \EOF \Derive \Symbol{c} \Seq \Symbol{d} \Seq \EOF \\
       \end{aligned}\\
-      &\Derive a \Seq C \Seq \EOF \Derive a \Seq c \Seq d \Seq \EOF
+      &\Derive \Symbol{a} \Seq \Symbol{C} \Seq \EOF \Derive \Symbol{a} \Seq \Symbol{c} \Seq \Symbol{d} \Seq \EOF
     \end{aligned}\\
-  &\Derive B \Seq \EOF \Derive b \Seq \EOF
+    &\Derive \Symbol{B} \Seq \EOF \Derive \Symbol{b} \Seq \EOF
   \end{aligned}
 \end{equation*}
 Torej vse možne stavčne oblike so:
 \begin{equation*}
-  S \Seq \EOF, A \Seq C \Seq \EOF, B \Seq \EOF, D \Seq C \Seq \EOF, a \Seq C \Seq \EOF, e \Seq C \Seq \EOF, C \Seq \EOF, e \Seq c \Seq d \Seq \EOF, c \Seq d \Seq \EOF
+  \Symbol{S} \Seq \EOF, \Symbol{A} \Seq \Symbol{C} \Seq \EOF, \Symbol{B} \Seq \EOF, \Symbol{D} \Seq \Symbol{C} \Seq \EOF, \Symbol{a} \Seq \Symbol{C} \Seq \EOF, \Symbol{e} \Seq \Symbol{C} \Seq \EOF, \Symbol{C} \Seq \EOF, \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \Seq \EOF, \Symbol{c} \Seq \Symbol{d} \Seq \EOF
 \end{equation*}
 
-$A$ se pojavi v $A \Seq C \Seq \EOF$, torej:
+$\Symbol{A}$ se pojavi v $\Symbol{A} \Seq \Symbol{C} \Seq \EOF$, torej:
 \begin{align*}
-  \FOLLOW(A) &= \FIRST(C \Seq \EOF) \\
-             &= \FIRST(\FIRST(C) \Seq \FIRST(\EOF))\\
-             &= \FIRST(\{c\} \Seq \{\EOF\})\\
-             &= \FIRST(\{c \Seq \EOF\})\\
-             &= \FIRST(c \Seq \EOF) \\
-             &= \FIRST(c)\\
-             &= \{c\}
+  \FOLLOW(\Symbol{A}) &= \FIRST(\Symbol{C} \Seq \EOF) \\
+             &= \FIRST(\FIRST(\Symbol{C}) \Seq \FIRST(\EOF))\\
+             &= \FIRST(\{\Symbol{c}\} \Seq \{\EOF\})\\
+             &= \FIRST(\{\Symbol{c} \Seq \EOF\})\\
+             &= \FIRST(\Symbol{c} \Seq \EOF) \\
+             &= \FIRST(\Symbol{c})\\
+             &= \{\Symbol{c}\}
 \end{align*}
 
-$B$ se pojavi v $B \Seq \EOF$, torej:
+$\Symbol{B}$ se pojavi v $\Symbol{B} \Seq \EOF$, torej:
 \begin{equation*}
-  \FOLLOW(B) = \FIRST(\EOF) = \{\EOF\}
+  \FOLLOW(\Symbol{B}) = \FIRST(\EOF) = \{\EOF\}
 \end{equation*}
 
-$C$ se pojavi v $A \Seq C \Seq \EOF, D \Seq C \Seq \EOF, a \Seq C \Seq \EOF, e \Seq C \Seq \EOF, C \Seq \EOF$, torej:
+$\Symbol{C}$ se pojavi v $\Symbol{A} \Seq \Symbol{C} \Seq \EOF, \Symbol{D} \Seq \Symbol{C} \Seq \EOF, \Symbol{a} \Seq \Symbol{C} \Seq \EOF, \Symbol{e} \Seq \Symbol{C} \Seq \EOF, \Symbol{C} \Seq \EOF$, torej:
 \begin{equation*}
-  \FOLLOW(B) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
+  \FOLLOW(\Symbol{B}) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
 \end{equation*}
 
-$D$ se pojavi v $D \Seq C \Seq \EOF$, torej:
+$\Symbol{D}$ se pojavi v $\Symbol{D} \Seq \Symbol{C} \Seq \EOF$, torej:
 \begin{align*}
-  \FOLLOW(D) &= \FIRST(C \Seq \EOF) \\
-             &= \FIRST(\FIRST(C) \Seq \FIRST(\EOF))\\
-             &= \FIRST(\{c\} \Seq \{\EOF\})\\
-             &= \FIRST(\{c \Seq \EOF\})\\
-             &= \FIRST(c \Seq \EOF) \\
-             &= \FIRST(c)\\
-             &= \{c\}
+  \FOLLOW(\Symbol{D}) &= \FIRST(\Symbol{C} \Seq \EOF) \\
+             &= \FIRST(\FIRST(\Symbol{C}) \Seq \FIRST(\EOF))\\
+             &= \FIRST(\{\Symbol{c}\} \Seq \{\EOF\})\\
+             &= \FIRST(\{\Symbol{c} \Seq \EOF\})\\
+             &= \FIRST(\Symbol{c} \Seq \EOF) \\
+             &= \FIRST(\Symbol{c})\\
+             &= \{\Symbol{c}\}
 \end{align*}
 
 %Za odločitev, namesto $\FIRST(D)$ in $\FIRST(a)$, uporabimo $\FIRST(\FIRST(D) \Seq \FOLLOW(A))$ in $\FIRST(\FIRST(a) \Seq \FOLLOW(A))$.
