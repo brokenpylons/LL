@@ -14,8 +14,9 @@ stdenv.mkDerivation {
   name = "paper";
   src = ./src;
 
+  TEXMFVAR="/tmp/texmf";
+
   preBuild = ''
-    export TEXMFVAR=/tmp/texmf
     mkdir -p $TEXMFVAR
   '';
 
@@ -24,9 +25,11 @@ stdenv.mkDerivation {
     cp paper.pdf $out
   '';
 
+
   buildInputs = [
+    pkgs.fontconfig
     (texlive.combine {
-      inherit (texlive) scheme-small luatex biblatex latexmk biber;
+      inherit (texlive) scheme-small luatex biblatex latexmk stix2-otf biber unicode-math lualatex-math;
     })
   ];
 }
