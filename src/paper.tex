@@ -25,6 +25,7 @@
 \newcommand{\Ex}{\textbf{Npr.:}\ }
 \newcommand{\Special}[1]{\textbf{#1}}
 \newcommand{\FIRST}{\textsc{first}}
+\newcommand{\OK}{\ \checkmark}
 \newcommand{\FOLLOW}{\textsc{follow}}
 \newcommand{\EOF}{\textsc{eof}}
 \newcommand{\Set}[1]{\mathbf{#1}}
@@ -41,6 +42,7 @@
 \newcommand{\Powerset}[1]{\mathcal{P}(#1)}
 \newcommand{\Str}[1]{\text{\textquotedbl\texttt{#1}\textquotedbl}}
 \newcommand{\Char}[1]{\texttt{#1}}
+\newcommand{\MathRef}[1]{\text{\ref{#1}}}
 \newcommand{\Arrow}{\Coloneq}
 \newcommand{\Derive}{\Rightarrow}
 \newcommand{\DeriveStar}{\xRightarrow{\ast}}
@@ -51,6 +53,12 @@
 \newcommand{\Rep}[2]{#1^#2}
 \newcommand{\Opt}[1]{#1?}
 \newcommand{\KleenePlus}[1]{#1^+}
+\newcommand{\Lookahead}[1]{{}_{\{{#1}\}}}
+\newcommand{\Lk}[1]{{}_{{#1}}}
+
+\newcounter{ngrammar}
+\setcounter{ngrammar}{0}
+\newcommand{\NGrammar}{\tag{$\Grammar_{\arabic{ngrammar}}$}\stepcounter{ngrammar}}
 
 
 \begin{document}
@@ -75,7 +83,7 @@ Produkcijska pravila pišemo z operatorjem $(\Arrow)$, na levi strani je vedno e
 
 \Ex
 \begin{equation}
-  \tag{$\Grammar_1$}
+  \NGrammar{}
   \label{g:listi}
   \begin{aligned}
     \Symbol{L} &\Arrow \Symbol{i} \Seq \Symbol{L}\\
@@ -105,7 +113,7 @@ Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več razli
   \end{equation*}
 
   \begin{equation}
-    \tag{$\Grammar_2$}
+    \NGrammar{}
     \label{g:plusab}
     \begin{aligned}
       \Symbol{E} &\Arrow \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
@@ -174,8 +182,8 @@ Jezik, ki ga gramatika opisuje je množica vseh stavkov:
 
 \Ex
   \begin{align*}
-    \Language{\Grammar_1} &= \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}\\
-    \Language{\Grammar_2} &= \{\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}
+    \Language{\MathRef{g:listi}} &= \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}\\
+    \Language{\MathRef{g:plusab}} &= \{\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}
   \end{align*}
 
 \subsection{Razpoznavanje}
@@ -184,7 +192,7 @@ Preveriti želimo ali je nek seznam terminalov $u \in \Kleene{T}$ v jeziku za gr
 
 \Ex
   \begin{equation*}
-    \Symbol{i} \Seq \Symbol{i} \in \Language{\Grammar_1}
+    \Symbol{i} \Seq \Symbol{i} \in \Language{\MathRef{g:listi}}
   \end{equation*}
 
   Ker $\Symbol{i} \Seq \Symbol{i} \in \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}$ je odgovor v tem primeru pritrdilen.
@@ -193,15 +201,25 @@ Problem je, da moramo sistematično iti skozi vse stavke.
 
 Rešitev je, da poskušamo iz $\StartSymbol$ izpeljati vhoden niz $u$, če je to mogoče potem $\StartSymbol \DeriveStar u$ in $u \in \Language{\Grammar}$ (po definiciji).
 Ker vhoden niz $u$ poznamo v naprej, stavčnih oblik iz katerih $u$ ne gre izpeljati ne rabimo upoštevati.
-Za določene jezike velja, da je na vsaki točki izpeljave možna samo ena stavčna oblika.
+%Za določene jezike velja, da je na vsaki točki izpeljave smiselna samo ena stavčna oblika.
 
 \Ex
   \begin{equation*}
-    \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Null
+    \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Symbol{L} \Derive \Symbol{i} \Seq \Symbol{i} \Seq \Null \OK
   \end{equation*}
-  Torej je odgovor pritrdilen.
+  \begin{center}
+  \begin{tabular}{|c|c|c|}
+    \hline
+    $\underline{\Symbol{i}} \Seq \Symbol{i}$ & $\underline{\Symbol{L}}$ & $\Symbol{i} \Seq \Symbol{L} \Union \Null$ \\ 
+    $\Symbol{i} \Seq \underline{\Symbol{i}}$ & $\Symbol{i} \Seq \underline{\Symbol{L}}$ & $\Symbol{i} \Seq \Symbol{L} \Union \Null$ \\ 
+    \hline
+    $\Symbol{i} \Seq \Symbol{i}$ & $\Symbol{i} \Seq \Symbol{i} \Seq \Null$  &  \\ 
+    \hline
+  \end{tabular}
+  \end{center}
+  Dobimo $\Symbol{i} \Seq \Symbol{i}$, torej je odgovor pritrdilen.
 
-Problem nastane, ko moramo izbrati med več desnimi stranmi.
+%Problem nastane, ko moramo izbrati med več desnimi stranmi.
 
 \Ex
   \begin{equation*}
@@ -210,23 +228,38 @@ Problem nastane, ko moramo izbrati med več desnimi stranmi.
 
   \begin{equation*}
     \Symbol{E} \Derive \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} \begin{aligned}[t]
-      \Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}\\
-      \Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}
+      &\Derive \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}\\
+      &\Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N} \Derive \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a} \OK
     \end{aligned}
   \end{equation*}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+  $\underline{\Symbol{b}} \Seq \Symbol{p} \Seq \Symbol{a}$ & $\underline{\Symbol{E}}$ & $\Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}$ \\ 
+  $\underline{\Symbol{b}} \Seq \Symbol{p} \Seq \Symbol{a}$ & $\underline{\Symbol{N}} \Seq \Symbol{p} \Seq \Symbol{N}$ & $\Symbol{a} \Union \Symbol{b}$ \\ 
+  $\Symbol{b} \Seq \Symbol{p} \Seq \underline{\Symbol{a}}$ & $\Symbol{a} \Seq \Symbol{p} \Seq \underline{\Symbol{N}}$ & $\Symbol{a} \Union \Symbol{b}$ \\ 
+  \hline
+  $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$ & $\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}$ &  \\ 
+  \hline
+\end{tabular}
+\end{center}
 
 Tukaj imamo dve možnosti ali uporabimo $\Symbol{N} \Arrow \Symbol{a}$ ali pa $\Symbol{N} \Arrow \Symbol{b}$.
 Rešitev je, da $\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}$ in $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}$ primerjamo s $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$.
 Pravilna izbira je $\Symbol{N} \Arrow \Symbol{b}$.
+Nato $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$ in $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b}$ primerjamo s $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$.
+Pravilna izbira je $\Symbol{N} \Arrow \Symbol{a}$.
+Dobimo $\Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}$, torej je odgovor priterdilen.
 
 \Ex
 V primeru, da imamo naslednjo gramatiko pa izbira ni takoj jasna:
 \begin{equation*}
-  \tag{$\Grammar_3$}
+  \NGrammar{}
   \label{g:first}
   \begin{aligned}
-    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \\
-    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \\
+    \Symbol{S} &\Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \Seq \Symbol{f} \\
+    \Symbol{A} &\Arrow \Symbol{D} \Union \Symbol{a} \Seq \Symbol{B} \\
     \Symbol{B} &\Arrow \Symbol{b}\\
     \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
     \Symbol{D} &\Arrow \Symbol{e} \Union \Null
@@ -234,52 +267,115 @@ V primeru, da imamo naslednjo gramatiko pa izbira ni takoj jasna:
 \end{equation*}
 
 \begin{equation*}
+  \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}
+\end{equation*}
+
+\begin{equation*}
   \Symbol{S} \begin{aligned}[t]
     &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
       &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
-        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}\\
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \OK\\
         &\Derive \Null \Seq \Symbol{C}
       \end{aligned}\\
-      &\Derive \Symbol{a} \Seq \Symbol{C}
+      &\Derive \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}
     \end{aligned}\\
-    &\Derive \Symbol{B}
+    &\Derive \Symbol{B} \Seq \Symbol{f}
   \end{aligned}
 \end{equation*}
 
-Zanima nas ali $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}$.
-Izpeljavo začnemo s stavčno obliko $\Symbol{S}$, produkcija $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B}$ ima na voljo dve desni strani.
-Pravilna je tista desna stran iz katere lahko izpeljemo $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
-Torej ali $\Symbol{A} \Seq \Symbol{C} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ ali $\Symbol{B} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
-Problem lahko poenostavimo, tako da se odločimo tako, da primerjamo prvi terminalni simbol v vhodnem nizu, ki še ga nismo razpoznali, s terminalnimi simboli s katerimi se lahko začneta desni strani.
-To seveda deluje samo za omejen nabor gramatik.
-Torej, če $\Symbol{e} \in \FIRST(\Symbol{A} \Seq \Symbol{C})$ izberemo $\Symbol{A} \Seq \Symbol{C}$, če $\Symbol{e} \in \FIRST(B)$ izberemo $\Symbol{B}$.
-Predpostavimo, da $\FIRST(\Symbol{A} \Seq \Symbol{C}) = \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}$ in $\FIRST(\Symbol{B}) = \{\Symbol{b}\}$.
-V tem primeru izberemo desno stran $\Symbol{A} \Seq \Symbol{C}$.
+Izbrati je potrebno tisto desno stran iz katere je mogoče izpeljati $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
+Torej zanima nas ali $\Symbol{A} \Seq \Symbol{C} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ ali $\Symbol{B} \Seq \Symbol{f} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+  $\underline{\Symbol{e}} \Seq \Symbol{c} \Seq \Symbol{d}$ & $\underline{\Symbol{S}}$ & $\Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \Seq \Symbol{f}$ \\ 
+  \hline
+\end{tabular}
+\end{center}
+Sicer bi lahko to preverili direktno:
+\begin{equation*}
+  \begin{aligned}[t]
+    &\Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
+      &\Derive \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
+        &\Derive \Symbol{e} \Seq \Symbol{C} \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}\\
+        &\Derive \Null \Seq \Symbol{C}
+      \end{aligned}\\
+      &\Derive \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}
+    \end{aligned}\\
+    &\Symbol{B} \Seq \Symbol{f}
+  \end{aligned}
+\end{equation*}
+Ampak, kot opazimo je skoraj enako dela, kot če poskušamo izpeljati $\Symbol{S} \DeriveStar \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
+Namesto tega, kot poenostavitev, se poskusimo odločiti samo glede na prvi terminalni simbol.
+Torej zanima nas ali $\Symbol{A} \Seq \Symbol{C} \DeriveStar \Symbol{e} \Seq \beta$ ali $\Symbol{B} \Seq \Symbol{f} \DeriveStar \Symbol{e} \Seq \beta$.
+Prednost tega pristopa je, da lahko vse terminalne simbole s katerimi se začneta $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{B} \Seq \Symbol{f}$ izračunamo v naprej.
+Enako lahko storimo za ostale desne strani produkcij.
+Temu rečemo množice $\FIRST$:
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Lk{\FIRST(\Symbol{A} \Seq \Symbol{C})} \Symbol{A} \Seq \Symbol{C} \Union \Lk{\FIRST(\Symbol{B} \Seq \Symbol{f})} \Symbol{B} \Seq \Symbol{f} \\
+    \Symbol{A} &\Arrow \Lk{\FIRST(\Symbol{D})} \Symbol{D} \Union \Lk{\FIRST(\Symbol{a} \Seq \Symbol{B})} \Symbol{a} \Seq \Symbol{B} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Lk{\FIRST(\Symbol{e})} \Symbol{e} \Union \Lk{\FIRST(\Null)} \Null
+  \end{aligned}
+\end{equation*}
+V tem primeru, konkretno:
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Lookahead{\Symbol{a}, \Symbol{c}, \Symbol{e}} \Symbol{A} \Seq \Symbol{C} \Union \Lookahead{\Symbol{b}} \Symbol{B} \Seq \Symbol{f} \\
+    \Symbol{A} &\Arrow \Lookahead{\Symbol{e}, \Null} \Symbol{D} \Union \Lookahead{\Symbol{a}} \Symbol{a} \Seq \Symbol{B} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Lookahead{\Symbol{e}} \Symbol{e} \Union \Lookahead{\Null} \Null
+  \end{aligned}
+\end{equation*}
 
-Sedaj imamo stavčno obliko $\Symbol{A} \Seq \Symbol{C}$, produkcija $\Symbol{A} \Arrow \Symbol{D} \Union \Symbol{a}$ ima na voljo dve desni strani.
-Če $\Symbol{e} \in \FIRST(\Symbol{D})$ izberemo $\Symbol{D}$, če $\Symbol{e} \in \FIRST(\Symbol{a})$ izberemo $\Symbol{a}$.
-Predpostavimo, da $\FIRST(\Symbol{D}) = \{\Null, \Symbol{e}\}$ in $\FIRST(a) = \{\Symbol{a}\}$.
-V tem primeru izberemo desno stran $\Symbol{D}$.
+Desno stran produkcije izberemo glede na prvi terminalen simbol.
+Torej, če $\Symbol{e} \in \FIRST(\Symbol{A} \Seq \Symbol{C})$ izberemo $\Symbol{A} \Seq \Symbol{C}$, če $\Symbol{e} \in \FIRST(\Symbol{B} \Seq \Symbol{f})$ izberemo $\Symbol{B} \Seq \Symbol{f}$.
+\begin{center}
+\begin{tabular}{|c|c|c|}
+  \hline
+  $\underline{\Symbol{e}} \Seq \Symbol{c} \Seq \Symbol{d}$ & $\underline{\Symbol{S}}$ & $\Lookahead{\Symbol{a}, \Symbol{c}, \underline{\Symbol{e}}} \Symbol{A} \Seq \Symbol{C} \Union \Lookahead{\Symbol{b}} \Symbol{B} \Seq \Symbol{f}$ \\ 
+  $\underline{\Symbol{e}} \Seq \Symbol{c} \Seq \Symbol{d}$ & $\underline{\Symbol{A}} \Seq \Symbol{C}$ & $\Lookahead{\underline{\Symbol{e}}, \Null} \Symbol{D} \Union \Lookahead{\Symbol{a}} \Symbol{a} \Seq \Symbol{B}$ \\ 
+  $\underline{\Symbol{e}} \Seq \Symbol{c} \Seq \Symbol{d}$ & $\underline{\Symbol{D}} \Seq \Symbol{C}$ & $\Lookahead{\underline{\Symbol{e}}} \Symbol{e} \Union \Lookahead{\Null} \Null$ \\ 
+  $\Symbol{e} \Seq \underline{\Symbol{c}} \Seq \Symbol{d}$ & $\Symbol{e} \Seq \underline{\Symbol{C}}$ & $\Symbol{c} \Seq \Symbol{d}$ \\ 
+  \hline
+  $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ & $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ & \\ 
+  \hline
+\end{tabular}
+\end{center}
+Dobimo $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$, torej je odgovor pritrdilen.
 
-Sedaj imamo stavčno obliko $\Symbol{D} \Seq \Symbol{C}$, produkcija $\Symbol{D} \Arrow \Symbol{e} \Union \Null$ ima na voljo dve desni strani.
-Če $\Symbol{e} \in \FIRST(\Symbol{e})$ izberemo $\Symbol{e}$, če $\Symbol{e} \in \FIRST(\Null)$ izberemo $\Null$.
-Predpostavimo, da $\FIRST(\Symbol{e}) = \{\Symbol{e}\}$ in $\FIRST(\Null) = \{\Null\}$.
-V tem primeru izberemo desno stran $\Symbol{e}$.
-Razpoznali smo terminalen simbol $\Symbol{e}$.
+Opazimo lahko, da določene množice $\FIRST$ vsebujejo $\Null$.
+To nam tokrat ni povzročalo težav.
+Na težave bi naleteli, na primer, če bi preverjali ali $\Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}$.
+Rešitev je, da uporabimo množice $\FOLLOW$, ki nam povedo kaj sledi v primeru kot se desna stran izpelje v $\Null$.
+Torej določimo:
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{A} \Seq \Symbol{C}) \Seq \FOLLOW(\Symbol{S}))} \Symbol{A} \Seq \Symbol{C} \Union \Lk{\FIRST(\FIRST(\Symbol{B} \Seq \Symbol{f}) \Seq \FOLLOW(\Symbol{S}))} \Symbol{B} \Seq \Symbol{f} \\
+    \Symbol{A} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{D}) \Seq \FOLLOW(\Symbol{A}))} \Symbol{D} \Union \Lk{\FIRST(\FIRST(\Symbol{a} \Seq \Symbol{B}) \Seq \FOLLOW(\Symbol{A}))} \Symbol{a} \Seq \Symbol{B} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{e}) \Seq \FOLLOW(D))} \Symbol{e} \Union \Lk{\FIRST(\FIRST(\Null) \Seq \FOLLOW(D))} \Null
+  \end{aligned}
+\end{equation*}
+V term primeru, konkretno:
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Lookahead{\Symbol{a}, \Symbol{c}, \Symbol{e}} \Symbol{A} \Seq \Symbol{C} \Union \Lookahead{\Symbol{b}} \Symbol{B} \Seq \Symbol{f} \\
+    \Symbol{A} &\Arrow \Lookahead{\Symbol{e}, \Symbol{c}} \Symbol{D} \Union \Lookahead{\Symbol{a}} \Symbol{a} \Seq \Symbol{B} \\
+    \Symbol{B} &\Arrow \Symbol{b}\\
+    \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
+    \Symbol{D} &\Arrow \Lookahead{\Symbol{e}} \Symbol{e} \Union \Lookahead{\Symbol{c}} \Null
+  \end{aligned}
+\end{equation*}
+Opazimo lahko, da v primerih, ko se desna stran ne more izpeljati v $\Null$ (torej, kot $\FIRST$ ne vsebuje $\Null$) dobimo enako, kot če bi uporabili samo $\FIRST$.
+Prav tako je pomembno, da so za vsako produkcijo te množice tuje.
+Če imamo isti terminalni simbol v več množicah se ne bomo mogli odločiti.
 
-Sedaj imamo stavčno obliko $\Symbol{e} \Seq \Symbol{C}$, produkcija $\Symbol{C} \Arrow \Symbol{c} \Seq \Symbol{d}$ ima na voljo samo eno desno stran.
-Potem odločanje ni potrebno.
-Razpoznali smo še terminalna simbola $\Symbol{c}$ in $\Symbol{d}$.
-
-Sedaj smo prišli do stavka $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$.
-Uspelo nam je izpeljati $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$, torej ${\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}}$.
-
-V nadaljevanju bo opisano kako izračunamo množico $\FIRST$.
-Prav tako, bomo potrebovali še množico $\FOLLOW$, v primeru ko je mogoče iz ene izmed desnih strani izpeljati $\Null$.
-Pri gramatiki \ref{g:first} je bilo to pri stavčnih oblikah $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{D} \Seq \Symbol{C}$, vendar pri $\Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d}$ nismo imeli problemov.
-Drugače bi bilo, če nas bi zanimalo ali $\Symbol{c} \Seq \Symbol{d} \in \Language{\text{\ref{g:first}}}$.
-
-\section{\FIRST}
+\section{FIRST}
 
 Funkcija $\FIRST$ vrne množico prvih terminalnih simbolov.
 Na splošno je definirana za seznam neterminalnih in terminalnih simbolov:
@@ -457,10 +553,10 @@ Torej, če je na začetku seznama terminalen simbol, je prvi terminalen simbol t
 
 V primeru, da $\varepsilon \in \FIRST(A)$, potem so lahko na začetku tudi terminalni simboli iz preostanka seznama $\FIRST(\gamma)$ (tukaj uporabimo pravilo za konkatenacijo množic):
 \begin{align*}
-  \FIRST(A \Seq \gamma) &= \FIRST(\{a \Seq b \mid a \in \FIRST(A) \land b \in \FIRST(\gamma)\})\\
-   &= \bigcup_{a \in \FIRST(A) \land b \in \FIRST(\gamma)} \FIRST(a \Seq b)
+  \FIRST(A \Seq \gamma) &= \FIRST(\{X \Seq Y \mid X \in \FIRST(A) \land Y \in \FIRST(\gamma)\})\\
+   &= \bigcup_{X \in \FIRST(A) \land Y \in \FIRST(\gamma)} \FIRST(X \Seq Y)
 \end{align*}
-Torej, ko $a = \Null$ potem imamo na začetku seznama $b$, ker $a \Seq b = \Null \Seq b = b$.
+Torej, ko $X = \Null$ potem imamo na začetku seznama $Y$, ker $X \Seq Y = \Null \Seq X = Y$.
 
 \Ex
   Ko izpeljujemo iz $\Symbol{D} \Seq \Symbol{C}$, se lahko zgodi, da $\Null \in \FIRST(\Symbol{D})$, takrat je na začetku $\Symbol{c} \in \FIRST(\Symbol{C})$:
@@ -647,7 +743,7 @@ V vseh primerih dobimo enako, kot z uporabo splošne definicije:
 
 \subsection*{Primeri}
 
-\section{\FOLLOW}
+\section{FOLLOW}
 \Ex
   \begin{equation*}
   \begin{aligned}
