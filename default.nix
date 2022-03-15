@@ -15,6 +15,7 @@ stdenv.mkDerivation {
   src = ./src;
 
   TEXMFVAR="/tmp/texmf";
+  FONTCONFIG_FILE = pkgs.makeFontsConf { fontDirectories = pkgs.texlive.stix2-otf.pkgs; };
 
   preBuild = ''
     mkdir -p $TEXMFVAR
@@ -24,7 +25,6 @@ stdenv.mkDerivation {
     mkdir -p $out
     cp paper.pdf $out
   '';
-
 
   buildInputs = [
     pkgs.fontconfig
