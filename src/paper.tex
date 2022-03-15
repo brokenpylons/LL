@@ -1,13 +1,16 @@
 \documentclass{article}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
+\usepackage{unicode-math}
+%\setmainfont{XITS}
+\setmathfont{STIX Two Math}
 
 \usepackage{biblatex}
 \addbibresource{references.bib}
 
 \usepackage{xcolor}
 \usepackage{amsmath}
-\usepackage{amssymb}
+%\usepackage{amssymb}
 \usepackage{listings}
 
 \DeclareMathOperator{\acc}{value}
@@ -21,9 +24,9 @@
 
 \newcommand{\Ex}{\textbf{Npr.:}\ }
 \newcommand{\Special}[1]{\textbf{#1}}
-\newcommand{\FIRST}{\textsc{FIRST}}
-\newcommand{\FOLLOW}{\textsc{FOLLOW}}
-\newcommand{\EOF}{\textsc{EOF}}
+\newcommand{\FIRST}{\textsc{first}}
+\newcommand{\FOLLOW}{\textsc{follow}}
+\newcommand{\EOF}{\textsc{eof}}
 \newcommand{\Set}[1]{\mathbf{#1}}
 \newcommand{\Symbol}[1]{\textcolor{blue}{#1}}
 \newcommand{\Grammar}{G}
@@ -38,7 +41,7 @@
 \newcommand{\Powerset}[1]{\mathcal{P}(#1)}
 \newcommand{\Str}[1]{\text{\textquotedbl\texttt{#1}\textquotedbl}}
 \newcommand{\Char}[1]{\texttt{#1}}
-\newcommand{\Arrow}{\Coloneqq}
+\newcommand{\Arrow}{\Coloneq}
 \newcommand{\Derive}{\Rightarrow}
 \newcommand{\DeriveStar}{\xRightarrow{\ast}}
 \newcommand{\DerivePlus}{\xRightarrow{+}}
@@ -81,6 +84,7 @@ Produkcijska pravila pišemo z operatorjem $(\Arrow)$, na levi strani je vedno e
 \end{equation}
 
 Produkcijska pravila, ki imajo na levi strani enak neterminalen simbol lahko združimo z unijo.
+
 \Ex
 \begin{align*}
   \Symbol{L} &\Arrow \Symbol{i} \Seq \Symbol{L} \Union \Null\\
@@ -762,7 +766,7 @@ Podobno lahko izračunamo še za ostale neterminalne simbole:
 
 Lahko pa uporabimo tudi definicijo na podlagi stavčnih oblik.
 \begin{equation*}
-  S \Seq \EOF \begin{aligned}[t]
+  \Symbol{S} \Seq \EOF \begin{aligned}[t]
     &\Derive \Symbol{A} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
       &\Derive \Symbol{D} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
         &\Derive \Symbol{e} \Seq \Symbol{C} \Seq \EOF \Derive \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \Seq \EOF \\
