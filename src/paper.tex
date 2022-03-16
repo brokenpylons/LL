@@ -375,7 +375,7 @@ Torej določimo:
     \Symbol{A} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{D}) \Seq \FOLLOW(\Symbol{A}))} \Symbol{D} \Union \Lk{\FIRST(\FIRST(\Symbol{a} \Seq \Symbol{B}) \Seq \FOLLOW(\Symbol{A}))} \Symbol{a} \Seq \Symbol{B} \\
     \Symbol{B} &\Arrow \Symbol{b}\\
     \Symbol{C} &\Arrow \Symbol{c} \Seq \Symbol{d}\\
-    \Symbol{D} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{e}) \Seq \FOLLOW(D))} \Symbol{e} \Union \Lk{\FIRST(\FIRST(\Null) \Seq \FOLLOW(D))} \Null
+    \Symbol{D} &\Arrow \Lk{\FIRST(\FIRST(\Symbol{e}) \Seq \FOLLOW(\Symbol{D}))} \Symbol{e} \Union \Lk{\FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{D}))} \Null
   \end{aligned}
 \end{equation*}
 V tem primeru, konkretno:
@@ -520,17 +520,17 @@ Lahko ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ izra
     \Symbol{S} &\Derive \Symbol{A} \Seq \Symbol{C}\\
     \Symbol{S} &\Derive \Symbol{B} \Seq \Symbol{f}
   \end{align*}
-  Lahko vidimo, da je razširitev konsistentna z definicijo za produkcijo (oz. neterminalen simbol).
   \begin{align*}
     \FIRST(\Symbol{S}) &= \FIRST(\{\Symbol{A} \Seq \Symbol{C}, \Symbol{B} \Seq \Symbol{f}\}) \\
               &= \FIRST(\Symbol{A} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B} \Seq \Symbol{f})\\
               &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\} \\
               &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
   \end{align*}
+  Lahko vidimo, da je razširitev konsistentna z definicijo za produkcijo (oz. neterminalen simbol).
 
   Izpeljavo iz $\Symbol{S}$ lahko nadaljujemo do $\Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}, \Symbol{B} \Seq \Symbol{f}$ (ustavimo se lahko kjer koli):
   \begin{equation*}
-    S \begin{aligned}[t]
+    \Symbol{S} \begin{aligned}[t]
       &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
         &\Derive \Symbol{D} \Seq \Symbol{C}\\
         &\Derive \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}
@@ -658,7 +658,7 @@ Terminalni simboli v tej gramatiki so $\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symb
 \end{align*}
 Potem izračunamo $\FIRST$ za vse desne strani po omenjenem vrstnem redu:
 \begin{align*}
-  \FIRST(\Symbol{c} \Seq \Symbol{d}) &= \FIRST(c) = \{\Symbol{c}\} \\
+  \FIRST(\Symbol{c} \Seq \Symbol{d}) &= \FIRST(\Symbol{c}) = \{\Symbol{c}\} \\
   \FIRST(\Symbol{C}) &= \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\} \\
   \FIRST(\Symbol{D}) &= \FIRST(\Symbol{e}) \cup \FIRST(\Null) \\
             &= \{\Symbol{e}\} \cup \{\Null\} = \{\Symbol{e}, \Null\} \\
@@ -779,7 +779,7 @@ V vseh primerih dobimo enako, kot z uporabo splošne definicije:
 %\subsection*{Primeri}
 
 \section{FOLLOW}
-Funkcija $\FOLLOW$ vrne vse terminalne simbole, ki sledijo nekemu neterminalnemu simbolu v katerikoli stavčni obliki.
+Funkcija $\FOLLOW$ vrne vse terminalne simbole, ki sledijo nekemu neterminalnemu simbolu v vseh stavčnih oblikah.
 Po konvenciji $\FOLLOW(S) = \{\EOF\}$, torej konec vhoda.
 
 \Ex
@@ -797,7 +797,7 @@ Po konvenciji $\FOLLOW(S) = \{\EOF\}$, torej konec vhoda.
   \Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}
 \end{equation*}
 
-Tokrat bomo $S$ pred začetkom izpeljave dodali na konec $\EOF$:
+Tokrat bomo pred začetkom izpeljave dodali na konec $\EOF$:
 \begin{equation*}
   \Symbol{S} \Seq \EOF \begin{aligned}[t]
     &\Derive \Symbol{A} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
@@ -921,7 +921,7 @@ Torej dobimo enako, kot pri izpeljavi.
   \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}
 \end{equation*}
 
-$\Symbol{A}$ pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \underline{\Symbol{C}}$, torej:
+$\Symbol{A}$ se pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \underline{\Symbol{C}}$, torej:
 \begin{align*}
   \FOLLOW(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{C}) \Seq \FOLLOW(\Symbol{S})) \\
              &= \FIRST(\{\Symbol{c}\} \Seq \{\EOF\})\\
@@ -944,7 +944,7 @@ $\Symbol{A}$ pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \underl
 Če je neterminalen simbol na koncu desne strani produkcije mu sledi $\Null$.
 
 
-$\Symbol{B}$ pojavi v produkcijah $\Symbol{S} \Arrow \Symbol{B} \Seq \underline{\Symbol{f}}$ in $\Symbol{A} \Arrow \Symbol{a} \Seq \Symbol{B} \Seq \underline{\Null}$, torej:
+$\Symbol{B}$ se pojavi v produkcijah $\Symbol{S} \Arrow \Symbol{B} \Seq \underline{\Symbol{f}}$ in $\Symbol{A} \Arrow \Symbol{a} \Seq \Symbol{B} \Seq \underline{\Null}$, torej:
 \begin{align*}
   \FOLLOW(\Symbol{B}) &= \FIRST(\FIRST(\Symbol{f}) \Seq \FOLLOW(\Symbol{S})) \cup \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{A})) \\
              &= \FIRST(\{\Symbol{f}\} \Seq \{\EOF\}) \cup \FIRST(\{\Null\} \Seq \{\Symbol{c}\}) \\
@@ -1192,6 +1192,11 @@ Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo o
   \FIRST(\FIRST(\Symbol{A} \Seq \Symbol{C}) \Seq \FOLLOW(\Symbol{S})) &\cap \FIRST(\FIRST(\Symbol{B} \Seq \Symbol{f}) \Seq \FOLLOW(\Symbol{S})) = \Empty\\
   \FIRST(\FIRST(\Symbol{D}) \Seq \FOLLOW(\Symbol{A})) &\cap \FIRST(\FIRST(\Symbol{a} \Seq \Symbol{B}) \Seq \FOLLOW(\Symbol{A})) = \Empty\\
   \FIRST(\FIRST(\Symbol{e}) \Seq \FOLLOW(\Symbol{D})) &\cap \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{D})) = \Empty
+\end{align*}
+\begin{align*}
+  \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} &\cap \{\Symbol{b}\} = \Empty \OK\\
+  \{\Symbol{e}, \Symbol{c}\} &\cap \{\Symbol{a}\} = \Empty \OK\\
+  \{\Symbol{e}\} &\cap \{\Symbol{c}\} = \Empty \OK
 \end{align*}
 
 \begin{algorithm}
