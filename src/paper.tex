@@ -82,6 +82,31 @@
 \Special{Meta:} Konkretni simboli so obarvani z modro $\Symbol{A}$, spremenljivke pa z črno $A$, množice $\Set{S}$ so označene s krepko pisavo.
 Neterminalni simboli so zapisani z velikimi črkami iz začetka latinske abecede $A$, terminalni simboli so zapisani z malimi črkami iz začetka latinske abecede $a$, neterminalni ali terminalni simboli so zapisani z velikimi črkami iz konca latinske abecede $X$, seznami neterminalnih ali terminalnih simbolov so zapisani z mali črkami iz začetka grške abecede $\alpha$ in seznami terminalnih simbolov so zapisani z malimi črkami iz konca latinske abecede $w$.
 
+\Special{Ponovitev:}
+Konkatenacija množic je podobna kartezičnemu produktu (vsakega z vsakim).
+\begin{align*}
+  S &= P \times Q \\
+  S &= \{ (x, y) \mid x \in P \land y \in Q\}
+\end{align*}
+\Ex
+\begin{align*}
+  P &= \{1, 2, 3\}\\
+  Q &= \{a, b\}\\
+  S &= \{(1, a), (1, b), (2, a), (2, b), (3, a), (3, b) \}
+\end{align*}
+
+Edina razlika je da zamenjamo vsak $(u, v)$, kjer $u \in U$ in $v\in V$, z $u \Seq v \in W$.
+\begin{equation*}
+  W = \{ u \Seq v \mid u \in U \land v \in V\}
+\end{equation*}
+
+\Ex
+\begin{align*}
+  U &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}\}\\
+  V &= \{\Symbol{e}, \Symbol{f}\}\\
+  W &= \{\Symbol{a} \Seq \Symbol{e}, \Symbol{a} \Seq \Symbol{f}, \Symbol{b} \Seq \Symbol{e}, \Symbol{b} \Seq \Symbol{f}, \Symbol{c} \Seq \Symbol{e}, \Symbol{c} \Seq \Symbol{f}\}
+\end{align*}
+
 \section{Gramatike}
 Gramatika je tuple $\Grammar = (\NonTerminals, \Terminals, \Productions, \StartSymbol)$, kjer je $\NonTerminals$ končna množica neterminalnih simbolov, $\Terminals$ končna množica terminalnih simbolov, $\Productions$ je končna relacija produkcij $\NonTerminals \times \Kleene{(\NonTerminals \cup \Terminals)}$ in $\StartSymbol \in \NonTerminals$ je začetni simbol.
 Tukaj $\Kleene{(\NonTerminals \cup \Terminals)}$ pomeni seznam terminalnih in neterminalnih simbolov (prazen seznam je $\Null$).
@@ -149,7 +174,7 @@ Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več razli
     \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N} &\DerivePlus \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
     \Symbol{E} &\DerivePlus \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}\\
     \Symbol{E} &\DeriveStar \Symbol{E}\\
-    \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} &\DerivePlus \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
+    \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N} &\DeriveStar \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}\\
     \Symbol{E} &\DeriveStar \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}
   \end{align*}
 
@@ -215,7 +240,7 @@ Preveriti želimo ali je nek seznam terminalov $u \in \Kleene{T}$ v jeziku za gr
 
   Ker $\Symbol{i} \Seq \Symbol{i} \in \{\Null, \Symbol{i}, \Symbol{i} \Seq \Symbol{i}, \dots\}$ je odgovor v tem primeru pritrdilen.
 
-Problem je, da moramo sistematično iti skozi vse stavke.
+Problem je, da moramo iti sistematično skozi vse stavke.
 
 Rešitev je, da poskušamo iz $\StartSymbol$ izpeljati vhoden niz $u$, če je to mogoče potem $\StartSymbol \DeriveStar u$ in $u \in \Language{\Grammar}$ (po definiciji).
 Ker vhoden niz $u$ poznamo v naprej, stavčnih oblik iz katerih $u$ ne gre izpeljati ne rabimo upoštevati.
@@ -496,7 +521,7 @@ Izračunamo še $\FIRST(\Symbol{B} \Seq \Symbol{f})$ :
   \Symbol{B} \Seq \Symbol{f} \Derive \underline{\Symbol{b}} \Seq \Symbol{f}
 \end{equation*}
 \begin{equation*}
-  \FIRST(\Symbol{B}) = \{\Symbol{b}\}
+  \FIRST(\Symbol{B} \Seq \Symbol{f}) = \{\Symbol{b}\}
 \end{equation*}
 
 Obe množici nato združimo in dobimo $\FIRST(\Symbol{S})$:
@@ -511,7 +536,7 @@ Definicijo lahko razširimo na množico seznamov neterminalnih in terminalnih si
 \end{equation*}
 Torej izračunamo $\FIRST$ za vsak seznam v $\Set{A}$ in jih združimo.
 
-Lahko ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ izračunamo vsak $\FIRST(\gamma)$ posebej in jih združimo:
+Lahko se ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ izračunamo vsak $\FIRST(\gamma)$ posebej in jih združimo:
 \begin{equation*}
   \FIRST(\alpha) = \FIRST(\{\gamma \mid \alpha \DeriveStar \gamma\}) = \bigcup_{\alpha \DeriveStar \gamma} \FIRST(\gamma)
 \end{equation*}
@@ -635,7 +660,7 @@ Obrazložitev je enaka, ko $\Null \in \FIRST(A)$, lahko imamo na začetku termin
   \end{equation*}
 
 Sedaj imamo dovolj pravil, da gramatiko mehanično pretvorimo v enačbe za $\FIRST$.
-Za razpoznavanje potrebujemo $\FIRST$ za vsako desno stran produkcije v gramatiki.
+Za razpoznavanje potrebujemo $\FIRST$ za desne strani produkcij.
 Gramatika ne sme vsebovati leve rekurzije (v tem primeru bi morali poiskati fiksno točko nastale rekurzivne enačbe).
 Vrstni red računanja je določen tako: Najprej izračunamo $\FIRST$ za terminalne simbole, nato pa če obstaja produkcija ${B \Arrow \gamma \Seq A \Seq \eta}$, najprej izračunamo $\FIRST$ za vse $A$ in nato izračunamo $\FIRST$ za $B$ (tako optimiziramo ponovno uporabo):
 
@@ -889,7 +914,7 @@ $\Symbol{B}$ se pojavi v dveh stavčni oblikah $\Symbol{a} \Seq \Symbol{B} \Seq 
 
 $\FOLLOW$ lahko določimo tudi na podlagi produkcij:
 \begin{align*}
-  \FOLLOW(A) &= \bigcup_{B \Arrow \gamma \Seq A \Seq \underline{\eta} \in \Productions} \FIRST(\FIRST(\underline{\eta}) \Seq \FOLLOW(B))
+  \FOLLOW(A) &= \bigcup_{B \Arrow \gamma \Seq A \Seq \underline{\eta}\ \in\ \Productions} \FIRST(\FIRST(\underline{\eta}) \Seq \FOLLOW(B))
 \end{align*}
 O smiselnosti tej definicije se lahko prepričamo tako:
 Recimo, da imamo dve produkciji $S \Arrow \sigma \Seq B \Seq \tau$ in $B \Arrow \gamma \Seq A \Seq \eta$.
@@ -919,10 +944,6 @@ Torej dobimo enako, kot pri izpeljavi.
   \end{aligned}
 \end{equation*}
 
-\begin{equation*}
-  \Symbol{e} \Seq \Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}
-\end{equation*}
-
 $\Symbol{A}$ se pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \underline{\Symbol{C}}$, torej:
 \begin{align*}
   \FOLLOW(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{C}) \Seq \FOLLOW(\Symbol{S})) \\
@@ -945,7 +966,6 @@ $\Symbol{A}$ se pojavi samo v produkciji $\Symbol{S} \Arrow \Symbol{A} \Seq \und
 \end{equation*}
 Če je neterminalen simbol na koncu desne strani produkcije mu sledi $\Null$.
 
-
 $\Symbol{B}$ se pojavi v produkcijah $\Symbol{S} \Arrow \Symbol{B} \Seq \underline{\Symbol{f}}$ in $\Symbol{A} \Arrow \Symbol{a} \Seq \Symbol{B} \Seq \underline{\Null}$, torej:
 \begin{align*}
   \FOLLOW(\Symbol{B}) &= \FIRST(\FIRST(\Symbol{f}) \Seq \FOLLOW(\Symbol{S})) \cup \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{A})) \\
@@ -957,6 +977,10 @@ $\Symbol{B}$ se pojavi v produkcijah $\Symbol{S} \Arrow \Symbol{B} \Seq \underli
              &= \{\Symbol{f}, \Symbol{c}\}
 \end{align*}
 
+Lahko bi sklepali tudi direktno (če pripnemo $\Null$ na začetek se vrednost ne spremeni):
+\begin{equation*}
+  \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{A})) = \FOLLOW(\Symbol{A})
+\end{equation*}
 
 \Ex Podobno lahko izračunamo še za ostale neterminalne simbole:
 \begin{align*}
