@@ -79,9 +79,11 @@
 
 \begin{document}
 %\Special{Meta:} Simboli so omejeni na (pod)poglavja.
+\Special{Meta:} Konkretni simboli so obarvani z modro $\Symbol{A}$, spremenljivke pa z črno $A$, množice $\Set{S}$ so označene s krepko pisavo.
+Neterminalni simboli so zapisani z velikimi črkami iz začetka latinske abecede $A$, terminalni simboli so zapisani z malimi črkami iz začetka latinske abecede $a$, neterminalni ali terminalni simboli so zapisani z velikimi črkami iz konca latinske abecede $X$, seznami neterminalnih ali terminalnih simbolov so zapisani z mali črkami iz začetka grške abecede $\alpha$ in seznami terminalnih simbolov so zapisani z malimi črkami iz konca latinske abecede $w$.
 
 \section{Gramatike}
-Gramatika je tuple $\Grammar = (\NonTerminals, \Terminals, \Productions, \StartSymbol)$, kjer je $\NonTerminals$ končna množica neteminalnih simbolov, $\Terminals$ končna množica terminalnih simbolov, $\Productions$ je končna relacija produkcij $\NonTerminals \times \Kleene{(\NonTerminals \cup \Terminals)}$ in $\StartSymbol \in \NonTerminals$ je začetni simbol.
+Gramatika je tuple $\Grammar = (\NonTerminals, \Terminals, \Productions, \StartSymbol)$, kjer je $\NonTerminals$ končna množica neterminalnih simbolov, $\Terminals$ končna množica terminalnih simbolov, $\Productions$ je končna relacija produkcij $\NonTerminals \times \Kleene{(\NonTerminals \cup \Terminals)}$ in $\StartSymbol \in \NonTerminals$ je začetni simbol.
 Tukaj $\Kleene{(\NonTerminals \cup \Terminals)}$ pomeni seznam terminalnih in neterminalnih simbolov (prazen seznam je $\Null$).
 
 \Ex
@@ -137,7 +139,7 @@ Postopek je podoben, kot pri vstavljanju v enačbo, le da lahko imamo več razli
     \end{aligned}
   \end{equation}
 
-\Special{Meta:} Vedno bomo najprej zamenjali najbolj levi neterminalen simbol.
+\Special{Meta:} Vedno bomo najprej zamenjali najbolj levi neterminalen simbol. Torej se bomo omejili samo na najbolj levo izpeljavo.
 
 Če smo zamenjali samo en neterminalen simbol potem uporabimo operator $(\Derive)$, če smo jih zamenjali več $(\DerivePlus)$, če smo jih zamenjali več ali nobenega pa $(\DeriveStar)$.
   \begin{align*}
@@ -181,7 +183,7 @@ Za \ref{g:listi} so vse stavčne oblike $\{\Symbol{L}, \Symbol{i} \Seq \Symbol{L
       \end{aligned}
     \end{aligned}
   \end{equation*}
-Za \ref{g:plusab} so vse stavčne oblike $\{\Symbol{E}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}$.
+Za \ref{g:plusab} so vse stavčne oblike $\{\Symbol{E}, \Symbol{N} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{N}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}$.
 
 Stavki gramatike, so vsi seznami terminalnih simbolov $w \in \Kleene{\Terminals}$, kjer $\StartSymbol \DeriveStar w$.
 Seznam vseh stavkov dobimo tako, da gremo sistematično skozi vse možne izpeljave in izberemo samo tiste stavčne oblike, ki vsebujejo samo terminalne simbole.
