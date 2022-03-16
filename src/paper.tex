@@ -2,6 +2,7 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{1em}
 \usepackage{unicode-math}
+\usepackage{lualatex-math}
 \setmathfont{STIX Two Math}
 
 \usepackage{biblatex}
@@ -44,8 +45,8 @@
 \newcommand{\MathRef}[1]{\text{\ref{#1}}}
 \newcommand{\Arrow}{\Coloneq}
 \newcommand{\Derive}{\Rightarrow}
-\newcommand{\DeriveStar}{\xRightarrow{\ast}}
-\newcommand{\DerivePlus}{\xRightarrow{+}}
+\newcommand{\DeriveStar}{\overset{\ast}{\Rightarrow}}
+\newcommand{\DerivePlus}{\overset{+}{\Rightarrow}}
 \newcommand{\Seq}{\ }
 \newcommand{\Union}{\mathrel{|}}
 \newcommand{\Kleene}[1]{#1^\ast}
@@ -68,7 +69,7 @@
         %numberstyle=\tiny,
         basicstyle=\footnotesize, 
         %keywordstyle=\color{black}\bfseries\em,
-        keywords={,input, output, return, datatype, function, in, if, else, foreach, while, begin, end, when, true, false, } 
+        keywords={,input, output, return, datatype, function, in, if, else, foreach, while, begin, end, when, true, false, switch, case, default, } 
         numbers=left,
         xleftmargin=.04\textwidth,
         #1
@@ -389,14 +390,14 @@ V tem primeru, konkretno:
 \end{equation*}
 Opazimo lahko, da v primerih, ko se desna stran ne more izpeljati v $\Null$ (torej, kot $\FIRST$ ne vsebuje $\Null$) dobimo enako, kot če bi uporabili samo $\FIRST$.
 Prav tako je pomembno, da so za vsako produkcijo te množice tuje.
-Če imamo isti terminalni simbol v več množicah se ne bomo mogli enoumno izbrati desne strani.
+Če imamo isti terminalni simbol v več množicah ne bomo mogli enoumno izbrati desne strani.
 
 Ko uporabimo $\FIRST$ in $\FOLLOW$ lahko brez težav razpoznamo tudi $\Symbol{c} \Seq \Symbol{d}$:
 \begin{center}
 \begin{tabular}{|c|c|c|}
   \hline
-  $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\underline{\Symbol{S}}$ & $\Lookahead{\Symbol{a}, \Symbol{c}, \underline{\Symbol{e}}} \Symbol{A} \Seq \Symbol{C} \Union \Lookahead{\Symbol{b}} \Symbol{B} \Seq \Symbol{f}$ \\ 
-  $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\underline{\Symbol{A}} \Seq \Symbol{C}$ & $\Lookahead{\underline{\Symbol{e}}, \Symbol{c}} \Symbol{D} \Union \Lookahead{\Symbol{a}} \Symbol{a} \Seq \Symbol{B}$ \\ 
+  $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\underline{\Symbol{S}}$ & $\Lookahead{\Symbol{a}, \underline{\Symbol{c}}, \Symbol{e}} \Symbol{A} \Seq \Symbol{C} \Union \Lookahead{\Symbol{b}} \Symbol{B} \Seq \Symbol{f}$ \\ 
+  $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\underline{\Symbol{A}} \Seq \Symbol{C}$ & $\Lookahead{\Symbol{e}, \underline{\Symbol{c}}} \Symbol{D} \Union \Lookahead{\Symbol{a}} \Symbol{a} \Seq \Symbol{B}$ \\ 
   $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\underline{\Symbol{D}} \Seq \Symbol{C}$ & $\Lookahead{\Symbol{e}} \Symbol{e} \Union \Lookahead{\underline{\Symbol{c}}} \Null$ \\ 
   $\underline{\Symbol{c}} \Seq \Symbol{d}$ & $\Null \Seq \underline{\Symbol{C}}$ & $\Symbol{c} \Seq \Symbol{d}$ \\ 
   \hline
@@ -476,7 +477,7 @@ Ko iščemo $\FIRST(A)$, po splošni definiciji $A$ sistematično zamenjamo z de
   \end{aligned}
 \end{equation*}
 \begin{equation*}
-  \FIRST(S) = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
+  \FIRST(\Symbol{S}) = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
 Lahko pa $\FIRST(\Symbol{S})$, razbijemo na $\FIRST(\Symbol{A} \Seq \Symbol{C})$ in $\FIRST(\Symbol{B} \Seq \Symbol{f})$, ker $\Symbol{S} \Arrow \Symbol{A} \Seq \Symbol{C} \Union \Symbol{B} \Seq \Symbol{f}$, izračunamo vsakega posamezno in ju združimo:
@@ -498,8 +499,8 @@ Izračunamo še $\FIRST(\Symbol{B} \Seq \Symbol{f})$ :
 
 Obe množici nato združimo in dobimo $\FIRST(\Symbol{S})$:
 \begin{align*}
-  \FIRST(S) &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\}\\
-  \FIRST(S) &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
+  \FIRST(\Symbol{S}) &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\} \cup \{\Symbol{b}\}\\
+  \FIRST(\Symbol{S}) &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{align*}
 
 Definicijo lahko razširimo na množico seznamov neterminalnih in terminalnih simbolov:
@@ -508,13 +509,13 @@ Definicijo lahko razširimo na množico seznamov neterminalnih in terminalnih si
 \end{equation*}
 Torej izračunamo $\FIRST$ za vsak seznam v $\Set{A}$ in jih združimo.
 
-To pomeni, da se lahko ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ izračunamo vsak $\FIRST(\gamma)$ posebej in jih združimo:
+Lahko ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ izračunamo vsak $\FIRST(\gamma)$ posebej in jih združimo:
 \begin{equation*}
   \FIRST(\alpha) = \FIRST(\{\gamma \mid \alpha \DeriveStar \gamma\}) = \bigcup_{\alpha \DeriveStar \gamma} \FIRST(\gamma)
 \end{equation*}
 
 \Ex
-  Iz $\Symbol{S}$ lahko izpeljemo $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{B} \Seq \Symbol{f}$, torej lahko izračunamo $\FIRST$ za vsakega posebej.
+  Iz $\Symbol{S}$ lahko izpeljemo $\Symbol{A} \Seq \Symbol{C}$ in $\Symbol{B} \Seq \Symbol{f}$, in nato izračunamo $\FIRST$ za vsakega posebej.
   \begin{align*}
     \Symbol{S} &\Derive \Symbol{A} \Seq \Symbol{C}\\
     \Symbol{S} &\Derive \Symbol{B} \Seq \Symbol{f}
@@ -527,7 +528,7 @@ To pomeni, da se lahko ustavimo na katerem koli koraku izpeljave $\alpha \Derive
               &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
   \end{align*}
 
-  Izpeljavo iz $\Symbol{S}$ lahko nadaljujemo do $\Symbol{C} \Seq \Symbol{C}, \Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}, \Symbol{B} \Seq \Symbol{f}$ (ustavimo se lahko kjer koli):
+  Izpeljavo iz $\Symbol{S}$ lahko nadaljujemo do $\Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}, \Symbol{B} \Seq \Symbol{f}$ (ustavimo se lahko kjer koli):
   \begin{equation*}
     S \begin{aligned}[t]
       &\Derive \Symbol{A} \Seq \Symbol{C} \begin{aligned}[t]
@@ -542,7 +543,7 @@ To pomeni, da se lahko ustavimo na katerem koli koraku izpeljave $\alpha \Derive
     \FIRST(\Symbol{S}) &= \FIRST(\{\Symbol{D} \Seq \Symbol{C}, \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}, \Symbol{B} \Seq \Symbol{f}\}) \\
               &= \FIRST(\Symbol{D} \Seq \Symbol{C}) \cup \FIRST(\Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}) \cup \FIRST(\Symbol{B} \Seq \Symbol{f})
   \end{align*}
-  $\FIRST(\Symbol{B})$ smo izračunali že zgoraj, $\FIRST(\Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}) = \{\Symbol{a}\}$.
+  $\FIRST(\Symbol{B} \Seq \Symbol{f})$ smo izračunali že zgoraj, $\FIRST(\Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C}) = \{\Symbol{a}\}$.
   Izračunamo še $\FIRST(\Symbol{D} \Seq \Symbol{C})$:
   \begin{equation*}
     \Symbol{D} \Seq \Symbol{C} \begin{aligned}[t]
@@ -590,10 +591,11 @@ Torej, ko $X = \Null$ potem imamo na začetku seznama $Y$, ker $X \Seq Y = \Null
   \end{equation*}
 
   Enako dobimo če uporabimo pravilo.
-  Najprej izračunajmo $\FIRST(\Symbol{C})$:
-  \begin{equation*}
-    \FIRST(\Symbol{C}) = \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\}
-  \end{equation*}
+  Najprej izračunajmo $\FIRST(\Symbol{D})$ in $\FIRST(\Symbol{C})$:
+  \begin{align*}
+    \FIRST(\Symbol{D}) &= \FIRST(\Symbol{e}) \cup \FIRST(\Null) = \{\Symbol{e}, \Null\}\\
+    \FIRST(\Symbol{C}) &= \FIRST(\Symbol{c} \Seq \Symbol{d}) = \{\Symbol{c}\}
+  \end{align*}
   Nato izračunamo $\FIRST(\Symbol{D} \Seq \Symbol{C})$ in dobimo enako:
   \begin{equation*}
     \begin{aligned}
@@ -632,8 +634,8 @@ Obrazložitev je enaka, ko $\Null \in \FIRST(A)$, lahko imamo na začetku termin
 
 Sedaj imamo dovolj pravil, da gramatiko mehanično pretvorimo v enačbe za $\FIRST$.
 Za razpoznavanje potrebujemo $\FIRST$ za vsako desno stran produkcije v gramatiki.
-Gramatika ne sme vsebovati leve rekurzije (v tem primeru bi morali poiskati fiksno točko nastale enačbe).
-Vrstni red računanja je določen tako: Najprej izračunamo $\FIRST$ za terminalne simbole, nato pa če obstaja produkcija ${A \Arrow \gamma \Seq X \Seq \eta}$, najprej izračunamo $\FIRST$ vse $X$ in nato izračunamo $\FIRST$ za $A$ (tako optimiziramo ponovno uporabo):
+Gramatika ne sme vsebovati leve rekurzije (v tem primeru bi morali poiskati fiksno točko nastale rekurzivne enačbe).
+Vrstni red računanja je določen tako: Najprej izračunamo $\FIRST$ za terminalne simbole, nato pa če obstaja produkcija ${B \Arrow \gamma \Seq A \Seq \eta}$, najprej izračunamo $\FIRST$ za vse $A$ in nato izračunamo $\FIRST$ za $B$ (tako optimiziramo ponovno uporabo):
 
 \Ex
 \begin{equation*}
@@ -675,6 +677,7 @@ Potem izračunamo $\FIRST$ za vse desne strani po omenjenem vrstnem redu:
             &= (\{\Null, \Symbol{a}, \Symbol{e}\} - \Null) \cup \{\Symbol{c}\} \\
             &= \{\Symbol{a}, \Symbol{e}\} \cup \{\Symbol{c}\}\\
             &= \{\Symbol{a}, \Symbol{c}, \Symbol{e}\}\\
+  \FIRST(\Symbol{B}) &= \FIRST(\Symbol{b}) = \{\Symbol{b}\} \\
   \FIRST(\Symbol{B} \Seq \Symbol{f}) &= \FIRST(\FIRST(\Symbol{B}) \Seq \FIRST(\Symbol{f})) \\
             &= \FIRST(\{\Symbol{b}\} \Seq \{\Symbol{f}\})\\
             &= \FIRST(\{\Symbol{b} \Seq \Symbol{f}\})\\
@@ -794,7 +797,7 @@ Po konvenciji $\FOLLOW(S) = \{\EOF\}$, torej konec vhoda.
   \Symbol{c} \Seq \Symbol{d} \in \Language{\MathRef{g:first}}
 \end{equation*}
 
-Tokrat bomo $S$ pred začetkom izpeljave dodali $\EOF$:
+Tokrat bomo $S$ pred začetkom izpeljave dodali na konec $\EOF$:
 \begin{equation*}
   \Symbol{S} \Seq \EOF \begin{aligned}[t]
     &\Derive \Symbol{A} \Seq \Symbol{C} \Seq \EOF \begin{aligned}[t]
@@ -817,7 +820,7 @@ Tokrat bomo $S$ pred začetkom izpeljave dodali $\EOF$:
 \end{tabular}
 \end{center}
 Tukaj naletimo na problem, ker $\Symbol{c} \notin \FIRST(\Symbol{D})$ in $\Symbol{c} \notin \FIRST(\Symbol{a} \Seq \Symbol{B})$.
-Ko pogledamo stavčno obliko $A \Seq \Symbol{C} \Seq \EOF$, vidimo, da v primeru $\Symbol{A} \DeriveStar \varepsilon$ sledi $\Symbol{C} \Seq \EOF$, torej bo na začetku terminalen simbol iz $\FIRST(\Symbol{C} \Seq \EOF)$.
+Ko pogledamo stavčno obliko $\Symbol{A} \Seq \Symbol{C} \Seq \EOF$, vidimo, da v primeru $\Symbol{A} \DeriveStar \varepsilon$ sledi $\Symbol{C} \Seq \EOF$, torej bo na začetku terminalen simbol iz $\FIRST(\Symbol{C} \Seq \EOF)$.
 Rešitev je torej, da se odločimo na podlagi simbolov, ki sledijo $\Symbol{A}$, torej $\FOLLOW(\Symbol{A})$.
 
 Trenutna definicija $\FOLLOW$ je odvisna od specifične stavčne oblike.
@@ -826,7 +829,7 @@ Torej mora delovati za poljubno stavčno obliko.
 Rešitev problema je, da $\FOLLOW$ izračunamo za vse možne stavčne oblike in rezultate združimo:
 \begin{align*}
   \FOLLOW(A) &= \{a \mid S \Seq \EOF \DeriveStar \gamma \Seq A \underline{\Seq \eta \Seq \EOF} \land a \in \FIRST(\eta \Seq \EOF)\}\\
-  &= \bigcup_{S \DeriveStar \gamma \Seq A \Seq \eta} \FIRST(\eta \Seq \EOF)
+  &= \bigcup_{S \Seq \EOF\ \DeriveStar\ \gamma \Seq A \Seq \eta \Seq \EOF} \FIRST(\eta \Seq \EOF)
 \end{align*}
 
 \Ex Izračunali bomo $\FOLLOW(\Symbol{A})$.
@@ -897,8 +900,8 @@ Torej $S$ sledi $\EOF$, $B$ sledi $\tau \Seq \EOF$, torej $\tau$ in to kar sledi
   \FOLLOW(B) &= \FIRST(\FIRST(\tau) \Seq \FOLLOW(S))\\
   \FOLLOW(A) &= \FIRST(\FIRST(\eta) \Seq \FOLLOW(B))\\
    &= \FIRST(\FIRST(\eta) \Seq \FIRST(\FIRST(\tau) \Seq \FOLLOW(S)))\\
-   &= \FIRST(\FIRST(\eta \Seq \tau) \Seq \FOLLOW(S))\\
-   &= \FIRST(\FIRST(\eta \Seq \tau) \Seq \FIRST(\EOF))\\
+   &= \FIRST(\FIRST(\eta) \Seq \FIRST(\FIRST(\tau) \Seq \FIRST(\EOF)))\\
+   &= \FIRST(\FIRST(\eta) \Seq \FIRST(\tau \Seq \EOF))\\
    &= \FIRST(\eta \Seq \tau \Seq \EOF)
 \end{align*}
 Torej dobimo enako, kot pri izpeljavi.
@@ -990,7 +993,7 @@ Torej vse možne stavčne oblike so:
 
 $\Symbol{C}$ se pojavi v $\Symbol{A} \Seq \Symbol{C} \Seq \underline{\EOF}, \Symbol{D} \Seq \Symbol{C} \Seq \underline{\EOF}, \Symbol{a} \Seq \Symbol{B} \Seq \Symbol{C} \Seq \underline{\EOF}, \Symbol{a} \Seq \Symbol{b} \Seq \Symbol{C} \Seq \underline{\EOF}, \Symbol{e} \Seq \Symbol{C} \Seq \underline{\EOF}, \Symbol{C} \Seq \underline{\EOF}$, torej:
 \begin{equation*}
-  \FOLLOW(\Symbol{B}) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
+  \FOLLOW(\Symbol{C}) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
 \end{equation*}
 
 $\Symbol{D}$ se pojavi v $\Symbol{D} \Seq \underline{\Symbol{C} \Seq \EOF}$, torej:
@@ -1110,7 +1113,7 @@ Pripravimo funkcijo, kjer $\gamma = X_1 \Seq X_2 \Seq \dots \Seq X_n$ in $\eta =
     return when lookahead
       $\FIRST(\FIRST(\gamma) \Seq \FOLLOW(A))$ $\rightarrow$ recognizeX$_1$() $\&\&$ recognizeX$_2$() $\&\&\ \dots\ \&\&$ recognizeX$_n$()
       $\dots$
-      $\FIRST(\FIRST(\eta) \Seq \FOLLOW(A))$ $\rightarrow$ recognizeY$_1$() $\&\&$ recognizeY$_2$() $\&\&\ \dots\ \&\&$ recognizeY$_n$()
+      $\FIRST(\FIRST(\eta) \Seq \FOLLOW(A))$ $\rightarrow$ recognizeY$_1$() $\&\&$ recognizeY$_2$() $\&\&\ \dots\ \&\&$ recognizeY$_m$()
       else $\rightarrow$ false
 \end{algorithm}
 
@@ -1184,6 +1187,13 @@ Za vse terminale lahko pripravimo eno samo funkcijo, ki prejme terminal, ki ga �
   &= \{\Symbol{c}\}
 \end{align*}
 
+Možice za vse desne strani produkcije morajo biti tuje, drugače se ne moremo odločiti:
+\begin{align*}
+  \FIRST(\FIRST(\Symbol{A} \Seq \Symbol{C}) \Seq \FOLLOW(\Symbol{S})) &\cap \FIRST(\FIRST(\Symbol{B} \Seq \Symbol{f}) \Seq \FOLLOW(\Symbol{S})) = \Empty\\
+  \FIRST(\FIRST(\Symbol{D}) \Seq \FOLLOW(\Symbol{A})) &\cap \FIRST(\FIRST(\Symbol{a} \Seq \Symbol{B}) \Seq \FOLLOW(\Symbol{A})) = \Empty\\
+  \FIRST(\FIRST(\Symbol{e}) \Seq \FOLLOW(\Symbol{D})) &\cap \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{D})) = \Empty
+\end{align*}
+
 \begin{algorithm}
   function recognizeS()
     return when lookahead
@@ -1208,6 +1218,46 @@ Za vse terminale lahko pripravimo eno samo funkcijo, ki prejme terminal, ki ga �
       $\Symbol{e}$ $\rightarrow$ recognizeTerminal($\Symbol{e}$)
       $\Symbol{c}$ $\rightarrow$ true
       else $\rightarrow$ false
+\end{algorithm}
+
+\newpage
+Primer kode za jezike, ki so bolj podobni C:
+\begin{algorithm}
+  function recognizeS()
+    switch lookahead
+      case $\Symbol{a}$:
+      case $\Symbol{c}$:
+      case $\Symbol{e}$:
+        return recognizeA() $\&\&$ recognizeC()
+      case $\Symbol{b}$:
+        return recognizeB() $\&\&$ recognizeTerminal($\Symbol{f}$)
+      default:
+        return false
+
+  function recognizeA()
+     switch lookahead
+      case $\Symbol{e}$:
+      case $\Symbol{c}$:
+        return recognizeD()
+      case $\Symbol{a}$:
+        return recognizeTerminal($\Symbol{a}$) $\&\&$ recognizeB()
+      default:
+        return false
+
+  function recognizeB()
+    return recognizeTerminal($\Symbol{b}$)
+
+  function recognizeC()
+    return recognizeTerminal($\Symbol{c}$) $\&\&$ recognizeTerminal($\Symbol{d}$)
+
+  function recognizeD()
+    switch lookahead
+      case $\Symbol{e}$:
+        return recognizeTerminal($\Symbol{e}$)
+      case $\Symbol{c}$:
+        return true
+      default:
+        return false
 \end{algorithm}
 
 \printbibliography
