@@ -31,6 +31,7 @@
 \newcommand{\Set}[1]{\mathbf{#1}}
 \newcommand{\Symbol}[1]{\textcolor{blue}{#1}}
 \newcommand{\Grammar}{G}
+\newcommand{\Alphabet}{\symbfup{\Sigma}}
 \newcommand{\Terminals}{\Set{T}}
 \newcommand{\NonTerminals}{\Set{N}}
 \newcommand{\Productions}{\Set{P}}
@@ -47,7 +48,7 @@
 \newcommand{\Derive}{\Rightarrow}
 \newcommand{\DeriveStar}{\overset{\ast}{\Rightarrow}}
 \newcommand{\DerivePlus}{\overset{+}{\Rightarrow}}
-\newcommand{\Seq}{\ }
+\newcommand{\Seq}{{\ \,}}
 \newcommand{\Union}{\mathrel{|}}
 \newcommand{\Kleene}[1]{#1^\ast}
 \newcommand{\Rep}[2]{#1^#2}
@@ -229,7 +230,7 @@ Jezik, ki ga gramatika opisuje je množica vseh stavkov:
     \Language{\MathRef{g:plusab}} &= \{\Symbol{a} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{a} \Seq \Symbol{p} \Seq \Symbol{b}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{a}, \Symbol{b} \Seq \Symbol{p} \Seq \Symbol{b} \}
   \end{align*}
 
-\subsection{Razpoznavanje}
+\section{Razpoznavanje}
 
 Preveriti želimo ali je nek seznam terminalov $u \in \Kleene{T}$ v jeziku za gramatiko $\Grammar$, torej $u \in \Language{\Grammar}$.
 
@@ -583,7 +584,7 @@ Lahko se ustavimo na katerem koli koraku izpeljave $\alpha \DeriveStar \gamma$ i
   \end{equation*}
   Nato rezultate združimo in dobimo $\FIRST(\Symbol{S})$:
   \begin{align*}
-    \FIRST(S) &= \{\Symbol{e}, \Symbol{c}\} \cup \{\Symbol{a}\} \cup \{\Symbol{b}\} \\
+    \FIRST(\Symbol{S}) &= \{\Symbol{e}, \Symbol{c}\} \cup \{\Symbol{a}\} \cup \{\Symbol{b}\} \\
               &= \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
   \end{align*}
 
@@ -1290,6 +1291,297 @@ Primer kode za jezike, ki so bolj podobni C:
       default:
         return false
 \end{algorithm}
+
+\section{Primeri}
+
+
+\subsection{Seznam}
+
+\subsubsection*{Jezik}
+\begin{verbatim}
+  []
+\end{verbatim}
+\begin{verbatim}
+  [1, 2, "abc", 3]
+\end{verbatim}
+
+\subsubsection*{Regularni izrazi}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \Symbol{string} &= \Char{"} \Seq \Kleene{(\Alphabet - \{\Char{"}\})} \Seq \Char{"}\\
+    \Symbol{comma} &= \Char{,}\\
+    \Symbol{lbrak} &= \Char{[}\\
+    \Symbol{rbrak} &= \Char{]}\\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Gramatika}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{List} &\Arrow \Symbol{lbrak} \Seq \Symbol{Items} \Seq \Symbol{rbrak}\\
+    \Symbol{Items} &\Arrow \Symbol{Item} \Seq \Symbol{Items'}\\
+    \Symbol{Items'} &\Arrow \Symbol{comma} \Seq \Symbol{Items} \Union \Null\\
+    \Symbol{Item} &\Arrow \Symbol{int} \Union \Symbol{string}
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{FIRST \& FOLLOW}
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{int}) &= \{\Symbol{int}\}\\
+    \FIRST(\Symbol{string}) &= \{\Symbol{string}\}\\
+    \FIRST(\Symbol{comma}) &= \{\Symbol{comma}\}\\
+    \FIRST(\Symbol{lbrak}) &= \{\Symbol{lbrak}\}\\
+    \FIRST(\Symbol{rbrak}) &= \{\Symbol{rbrak}\}\\
+    \FIRST(\Symbol{Item}) &= \{\Symbol{int}, \Symbol{string}\}\\
+    \FIRST(\Symbol{comma} \Seq \Symbol{Items}) &= \{\Symbol{comma}\}\\
+    \FIRST(\Symbol{Item} \Seq \Symbol{Items'}) &= \{\Symbol{int}, \Symbol{string}\}\\
+    \FOLLOW(\Symbol{List}) &= \{\EOF\}\\
+    \FOLLOW(\Symbol{Items}) &= \{\Symbol{rbrak}\}\\
+    \FOLLOW(\Symbol{Items'}) &= \{\Symbol{rbrak}\}\\
+    \FOLLOW(\Symbol{Item}) &= \{\Symbol{comma}\}
+  \end{aligned}
+\end{equation*}
+
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\FIRST(\Symbol{comma} \Seq \Symbol{Items}) \Seq \FOLLOW(\Symbol{Items'})) &= \{\Symbol{comma}\}\\
+    \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{Items'})) &= \{\Symbol{rbrak}\}\\
+    \FIRST(\FIRST(\Symbol{int}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+  \end{aligned}
+\end{equation*}
+
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{List} &\Arrow \Symbol{lbrac} \Seq \Symbol{Items} \Seq \Symbol{rbrac}\\
+    \Symbol{Items} &\Arrow \Symbol{Item} \Seq \Symbol{Items'}\\
+    \Symbol{Items'} &\Arrow \Lookahead{\Symbol{comma}} \Symbol{comma} \Seq \Symbol{Items} \Union \Lookahead{\Symbol{rbrak}} \Null\\
+    \Symbol{Item} &\Arrow \Lookahead{\Symbol{int}} \Symbol{int} \Union \Lookahead{\Symbol{string}} \Symbol{string}
+  \end{aligned}
+\end{equation*}
+
+\subsection{Slovar}
+\begin{verbatim}
+  {}
+\end{verbatim}
+\begin{verbatim}
+  {
+    "a": 1;
+    "b": "c";
+  }
+\end{verbatim}
+
+\subsubsection*{Regularni izrazi}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \Symbol{string} &= \Char{"} \Seq \Kleene{(\Alphabet - \{\Char{"}\})} \Seq \Char{"}\\
+    \Symbol{colon} &= \Char{:}\\
+    \Symbol{semi} &= \Char{;}\\
+    \Symbol{lbrac} &= \Char{\{}\\
+    \Symbol{rbrac} &= \Char{\}}\\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Gramatika}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{Dict} &\Arrow \Symbol{lbrac} \Seq \Symbol{Entries} \Seq \Symbol{rbrac}\\
+    \Symbol{Entries} &\Arrow \Symbol{Entry} \Seq \Symbol{semi} \Seq \Symbol{Entries} \Union \Null\\
+    \Symbol{Entry} &\Arrow \Symbol{string} \Seq \Symbol{colon} \Seq \Symbol{Item}\\
+    \Symbol{Item} &\Arrow \Symbol{int} \Union \Symbol{string}
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{FIRST \& FOLLOW}
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{int}) &= \{\Symbol{int}\}\\
+    \FIRST(\Symbol{string}) &= \{\Symbol{string}\}\\
+    \FIRST(\Symbol{comma}) &= \{\Symbol{comma}\}\\
+    \FIRST(\Symbol{lbrac}) &= \{\Symbol{lbrac}\}\\
+    \FIRST(\Symbol{rbrac}) &= \{\Symbol{rbrac}\}\\
+    \FIRST(\Symbol{Item}) &= \{\Symbol{int}, \Symbol{string}\}\\
+    \FIRST(\Symbol{comma} \Seq \Symbol{Items}) &= \{\Symbol{comma}\}\\
+    \FIRST(\Symbol{Entry} \Seq \Symbol{semi} \Seq \Symbol{Entries}) &= \{\Symbol{int}, \Symbol{string}\}\\
+    \FOLLOW(\Symbol{Dict}) &= \{\EOF\}\\
+    \FOLLOW(\Symbol{Entries}) &= \{\Symbol{rbrac}\}\\
+    \FOLLOW(\Symbol{Entry}) &= \{\Symbol{semi}\}\\
+    \FOLLOW(\Symbol{Item}) &= \{\Symbol{semi}\}
+  \end{aligned}
+\end{equation*}
+
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\FIRST(\Symbol{Entry} \Seq \Symbol{semi} \Seq \Symbol{Entries}) \Seq \FOLLOW(\Symbol{Entries})) &= \{\Symbol{int}, \Symbol{string}\}\\
+    \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{Entries'})) &= \{\Symbol{rbrac}\}\\
+    \FIRST(\FIRST(\Symbol{int}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+  \end{aligned}
+\end{equation*}
+
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{Dict} &\Arrow \Symbol{lbrac} \Seq \Symbol{Entries} \Seq \Symbol{rbrac}\\
+    \Symbol{Entries} &\Arrow \Lookahead{\Symbol{int}, \Symbol{string}} \Symbol{Entry} \Seq \Symbol{semi} \Seq \Symbol{Entries} \Union \Lookahead{\Symbol{rbrac}} \Null\\
+    \Symbol{Entry} &\Arrow \Symbol{string} \Seq \Symbol{colon} \Seq \Symbol{Item}\\
+    \Symbol{Item} &\Arrow \Lookahead{\Symbol{int}} \Symbol{int} \Union \Lookahead{\Symbol{string}} \Symbol{string}
+  \end{aligned}
+\end{equation*}
+
+\subsection{BC}
+\begin{verbatim}
+  1 + 1
+\end{verbatim}
+\begin{verbatim}
+  1 - 1
+\end{verbatim}
+\begin{verbatim}
+  a = 1;
+  b = 2;
+  print a + b;
+\end{verbatim}
+
+\subsubsection*{Regularni izrazi}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \Symbol{id} &= \KleenePlus{\{\Char{a}, \dots, \Char{z}\}}\\
+    \Symbol{asign} &= \Char{=}\\
+    \Symbol{semi} &= \Char{;}\\
+    \Symbol{plus} &= \Char{+}\\
+    \Symbol{minus} &= \Char{-}\\
+    \Symbol{times} &= \Char{*}\\
+    \Symbol{divide} &= \Char{/}\\
+    \Symbol{lparen} &= \Char{(}\\
+    \Symbol{rparen} &= \Char{)}\\
+    \Symbol{print} &= \Char{p} \Seq \Char{r} \Seq \Char{i} \Seq \Char{n} \Seq \Char{t}\\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Gramatika}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{Program} &\Arrow \Symbol{Expr} \Union \Symbol{Stmts}\\
+    \Symbol{Stmts} &\Arrow \Symbol{Stmt} \Seq \Symbol{semi} \Seq \Symbol{Stmts} \Union \Null\\
+    \Symbol{Stmt} &\Arrow \Symbol{id} \Seq \Symbol{assign} \Seq \Symbol{Expr} \Union \Symbol{print} \Seq \Symbol{Expr}\\
+    \Symbol{Expr} &\Arrow \Symbol{Term} \Seq \Symbol{Expr'}\\
+    \Symbol{Expr'} &\Arrow \Symbol{plus} \Seq \Symbol{Term} \Seq \Symbol{Expr'} \Union \Symbol{minus} \Seq \Symbol{Term} \Seq \Symbol{Expr'} \Union \Null\\
+    \Symbol{Term} &\Arrow \Symbol{Fac} \Seq \Symbol{Term'}\\
+    \Symbol{Term'} &\Arrow \Symbol{times} \Seq \Symbol{Fac} \Seq \Symbol{Term'} \Union \Symbol{divide} \Seq \Symbol{Fac} \Seq \Symbol{Term'} \Union \Null\\
+    \Symbol{Fac} &\Arrow \Symbol{plus} \Seq \Symbol{Value} \Union \Symbol{minus} \Seq \Symbol{Value} \Union \Symbol{Value}\\
+    \Symbol{Value} &\Arrow \Symbol{int} \Union \Symbol{id} \Union \Symbol{lparen} \Seq \Symbol{Expr} \Seq \Symbol{rparen}
+  \end{aligned}
+\end{equation*}
+
+\subsection{Lisp}
+\begin{verbatim}
+  (cons 1 (cons 1 ()))
+\end{verbatim}
+\begin{verbatim}
+  (cons (+ 1 1) 2)
+\end{verbatim}
+\begin{verbatim}
+  (list 1 2 3)
+\end{verbatim}
+
+\subsubsection*{Regularni izrazi}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \Symbol{id} &= \KleenePlus{\{\Char{a}, \dots, \Char{z}, \Char{+}, \Char{-}, \Char{*}, \Char{/} \}}\\
+    \Symbol{lparen} &= \Char{(}\\
+    \Symbol{rparen} &= \Char{)}\\
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Gramatika}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{App} &\Arrow \Symbol{lparen} \Seq \Symbol{Expr} \Seq \Symbol{Exprs} \Seq \Symbol{rparen}\\
+    \Symbol{Expr} &\Arrow \Symbol{Expr} \Seq \Symbol{Exprs} \Union \Null\\
+    \Symbol{Expr} &\Arrow \Symbol{int} \Union \Symbol{id} \Union \Symbol{App}
+  \end{aligned}
+\end{equation*}
+
+\subsection{DC}
+\begin{verbatim}
+  10 3 *
+\end{verbatim}
+\begin{verbatim}
+  1 2 + 3 *
+\end{verbatim}
+\begin{verbatim}
+  8 9 / 1 +
+\end{verbatim}
+
+\subsubsection*{Regularni izrazi}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
+    \Symbol{operation} &= \{\Char{+}, \Char{-}, \Char{*}, \Char{/}\}
+  \end{aligned}
+\end{equation*}
+
+\subsubsection*{Gramatika}
+\begin{equation*}
+  \begin{aligned}
+    \Symbol{Cmds} &\Arrow \Symbol{Cmd} \Seq \Symbol{Cmds} \Union \Null \\
+    \Symbol{Cmd} &\Arrow \Symbol{int} \Union \Symbol{operation}\\
+  \end{aligned}
+\end{equation*}
+
+\subsection{JSON}
+\begin{verbatim}
+  "b"
+\end{verbatim}
+\begin{verbatim}
+  [1, 2, 3]
+\end{verbatim}
+\begin{verbatim}
+  {
+    "a": [1, 2, 3];
+    "b": "c";
+    "d": {"a": 1;};
+  }
+\end{verbatim}
+
+\subsection{Graphviz}
+\begin{verbatim}
+  graph {}
+\end{verbatim}
+\begin{verbatim}
+  graph {
+    A;
+  }
+\end{verbatim}
+\begin{verbatim}
+  graph {
+    A; B; C;
+    A -- A;
+    B -- C;
+    A -- C;
+  }
+\end{verbatim}
+
+\subsection{Razširjen JSON}
+\begin{verbatim}
+  "b"
+\end{verbatim}
+\begin{verbatim}
+  [1 + 2, 2, 3]
+\end{verbatim}
+\begin{verbatim}
+  {
+    a: [1 - 1, 2, 3];
+    b: 2;
+    c: {d: 3};
+    d: {a: a[0] - b * c.d;};
+  }
+\end{verbatim}
+
 
 \printbibliography
 \end{document}
