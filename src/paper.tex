@@ -1299,7 +1299,7 @@ Primer kode za jezike, ki so bolj podobni C:
 
 \subsubsection*{Jezik}
 \begin{verbatim}
-  []
+  [1]
 \end{verbatim}
 \begin{verbatim}
   [1, 2, "abc", 3]
@@ -1433,12 +1433,6 @@ Primer kode za jezike, ki so bolj podobni C:
 
 \subsection{BC}
 \begin{verbatim}
-  1 + 1
-\end{verbatim}
-\begin{verbatim}
-  1 - 1
-\end{verbatim}
-\begin{verbatim}
   a = 1;
   b = 2;
   print a + b;
@@ -1464,7 +1458,7 @@ Primer kode za jezike, ki so bolj podobni C:
 \subsubsection*{Gramatika}
 \begin{equation*}
   \begin{aligned}
-    \Symbol{Program} &\Arrow \Symbol{Expr} \Union \Symbol{Stmts}\\
+    \Symbol{Program} &\Arrow \Symbol{Stmts}\\
     \Symbol{Stmts} &\Arrow \Symbol{Stmt} \Seq \Symbol{semi} \Seq \Symbol{Stmts} \Union \Null\\
     \Symbol{Stmt} &\Arrow \Symbol{id} \Seq \Symbol{assign} \Seq \Symbol{Expr} \Union \Symbol{print} \Seq \Symbol{Expr}\\
     \Symbol{Expr} &\Arrow \Symbol{Term} \Seq \Symbol{Expr'}\\
