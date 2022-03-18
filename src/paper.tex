@@ -662,7 +662,7 @@ Obrazložitev je enaka, ko $\Null \in \FIRST(A)$, lahko imamo na začetku termin
 
 Sedaj imamo dovolj pravil, da gramatiko mehanično pretvorimo v enačbe za $\FIRST$.
 Za razpoznavanje potrebujemo $\FIRST$ za desne strani produkcij.
-Gramatika ne sme vsebovati leve rekurzije (v tem primeru bi morali poiskati fiksno točko nastale rekurzivne enačbe).
+Gramatika ne sme vsebovati leve rekurzije.
 Vrstni red računanja je določen tako: Najprej izračunamo $\FIRST$ za terminalne simbole, nato pa če obstaja produkcija ${B \Arrow \gamma \Seq A \Seq \eta}$, najprej izračunamo $\FIRST$ za vse $A$ in nato izračunamo $\FIRST$ za $B$ (tako optimiziramo ponovno uporabo):
 
 \Ex
@@ -804,7 +804,156 @@ V vseh primerih dobimo enako, kot z uporabo splošne definicije:
   \FIRST(\Symbol{S}) = \{\Symbol{a}, \Symbol{b}, \Symbol{c}, \Symbol{e}\}
 \end{equation*}
 
-%\subsection*{Primeri}
+\subsection{Rekurzija}
+Recimo, da imamo rekurzivno gramatiko:
+\begin{equation*}
+  \NGrammar{}
+  \label{g:first}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Symbol{A} \\
+    \Symbol{A} &\Arrow \Symbol{a} \Seq \Symbol{A} \Union \Null
+  \end{aligned}
+\end{equation*}
+
+Tukaj pride to težave, ko želimo izračunati $\FIRST(\Symbol{A})$, za izračun $\FIRST(\Symbol{a} \Seq \Symbol{A})$ potrebujemo $\FIRST(\Symbol{A})$ in za izračun $\FIRST(\Symbol{A})$ potrebujemo $\FIRST(\Symbol{a} \Seq \Symbol{A})$.
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{a}) &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \FIRST(\Symbol{a} \Seq \Symbol{A}) \cup \FIRST(\Null)\\
+    \FIRST(\Symbol{a} \Seq \Symbol{A}) &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A}))
+  \end{aligned}
+\end{equation*}
+Enačba je torej rekurzivna.
+Rešimo jo tako, da na začetku določimo za vsak neterminalen simbol $A$, $\FIRST(A) = \Empty$.
+Potem pri vseh enačbah vzamemo obstoječe vrednosti $\FIRST(A)$ in izračunamo naslednjo vrednost $\FIRST(A)$.
+Postopek ponavljamo tako dolgo, da se vrednosti $\FIRST(A)$ nehajo spreminjati.
+
+\Ex
+Določimo, da je $\FIRST(\Symbol{A}) = \Empty$.
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{a}) &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \Empty
+  \end{aligned}
+\end{equation*}
+
+Sedaj lahko vstavimo vrednost $\FIRST(\Symbol{A})$ v enačbo $\FIRST(\Symbol{a} \Seq \Symbol{A})$ in nato izračunamo novo vrednost $\FIRST(\Symbol{A})$ (konkatenacija z $\Empty$ je vedno $\Empty$)
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) &= \FIRST(\FIRST(\Symbol{a}) \Seq \Empty))\\
+                       &= \FIRST(\{a\} \Seq \Empty) \\
+                       &= \FIRST(\Empty)\\
+                       &= \Empty\\
+    \FIRST(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) \cup \FIRST(\Null)\\
+                       &= \Empty \cup \{\Null\}\\
+                       &= \{\Null\}
+  \end{aligned}
+\end{equation*}
+Dobimo naslednjo vrednost $\FIRST(\Symbol{A}) = \{\Null\}$ in postopek ponovimo.
+
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) &= \FIRST(\FIRST(\Symbol{a}) \Seq \{\Null\}))\\
+                       &= \FIRST(\{\Symbol{a}\} \Seq \{\Null\}) \\
+                       &= \FIRST(\{\Symbol{a} \Seq \Null\})\\
+                       &= \FIRST(\Symbol{a})\\
+                       &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) \cup \FIRST(\Null)\\
+                       &= \{\Symbol{a}\} \cup \{\Null\}\\
+                       &= \{\Symbol{a}, \Null\}
+  \end{aligned}
+\end{equation*}
+Dobimo naslednjo vrednost $\FIRST(\Symbol{A}) = \{\Null, \Symbol{a}\}$ in postopek ponovimo.
+
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) &= \FIRST(\FIRST(\Symbol{a}) \Seq \{\Null, \Symbol{a}\}))\\
+                       &= \FIRST(\{\Symbol{a}\} \Seq \{\Null, \Symbol{a}\}) \\
+                       &= \FIRST(\{\Symbol{a} \Seq \Null, \Symbol{a} \Seq \Symbol{a}\})\\
+                       &= \FIRST(\Symbol{a}) \cup \FIRST(\Symbol{a} \Seq \Symbol{a}) \\
+                       &= \{\Symbol{a}\} \cup \{\Symbol{a}\}\\
+                       &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A})) \cup \FIRST(\Null)\\
+                       &= \{\Symbol{a}\} \cup \{\Null\}\\
+                       &= \{\Symbol{a}, \Null\}
+  \end{aligned}
+\end{equation*}
+Dobili smo spet $\FIRST(\Symbol{A}) = \{\Null, \Symbol{a}\}$, tukaj se ustavimo.
+Rešitev izračuna je, torej:
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{a}) &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \{\Null, \Symbol{a}\}\\
+  \end{aligned}
+\end{equation*}
+Če želimo $\FIRST$ implementirati uporabimo ta postopek, ker je popolnoma splošen in deluje za vse gramatike.
+Lahko ga preizkusite na levi rekurziji in boste ugotovili, da še vedno deluje pravilno:
+\begin{equation*}
+  \NGrammar{}
+  \label{g:first}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Symbol{A} \\
+    \Symbol{A} &\Arrow \Symbol{A} \Symbol{a} \Union \Null
+  \end{aligned}
+\end{equation*}
+
+V primeru, da imamo samo desno rekurzijo pa lahko sklepamo tudi krajše:
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\Symbol{a}) &= \{\Symbol{a}\}\\
+    \FIRST(\Symbol{A}) &= \FIRST(\Symbol{a} \Seq \Symbol{A}) \cup \FIRST(\Null)\\
+    \FIRST(\Symbol{a} \Seq \Symbol{A}) &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{A}))\\
+                                       &= \FIRST(\Symbol{a})\\
+                                       &= \{\Symbol{a}\}
+  \end{aligned}
+\end{equation*}
+Torej $\FIRST(\Symbol{a}) = \{\Symbol{a}\}$, če to množico konkateniramo s poljubno množico $\Set{B} = \{\Symbol{b_1}, \dots, \Symbol{b_1}\}$, dobimo vedno $\{\Symbol{a} \Seq \Symbol{b_1}, \dots, \Symbol{a} \Seq \Symbol{b_n}\}$ (v vseh primerih je na začetku $\Symbol{a}$).
+Torej, če izračunamo $\FIRST$ dobimo vedno $\Symbol{a}$:
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(\{\Symbol{a} \Seq \Symbol{b_1}, \dots, \Symbol{a} \Seq \Symbol{b_n}\}) &= \FIRST(\Symbol{a} \Seq \Symbol{b_1}) \cup \dots \cup \FIRST(\Symbol{a} \Seq \Symbol{b_n})\\
+    &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{b_1})) \cup \dots \cup \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{b_1}))\\
+    &= \FIRST(\Symbol{a}) \cup \dots \cup \FIRST(\Symbol{a})\\
+    &= \{\Symbol{a}\} \cup \dots \cup \{\Symbol{a}\}\\
+    &= \{\Symbol{a}\}
+  \end{aligned}
+\end{equation*}
+Torej vedno, ko imamo produkcijo oblike $A \Arrow \alpha \Seq A \Union \beta$ lahko $\FIRST$ izračunamo tako:
+\begin{equation*}
+  \begin{aligned}
+    \FIRST(A) &= \FIRST(\alpha \Seq A) \cup \FIRST(\beta)\\
+                       &= \FIRST(\alpha) \cup \FIRST(\beta)\\
+    \FIRST(\alpha \Seq A) &= \FIRST(\FIRST(\alpha) \Seq \FIRST(A))\\
+                                   &= \FIRST(\alpha)
+  \end{aligned}
+\end{equation*}
+To pravilo velja vedno, ko imamo desno rekurzijo.
+V primeru, da $\alpha \DeriveStar \Null$ potem to več ni desna rekurzija ampak skrita leva rekurzija, ki jo je potrebno odpraviti.
+
+Če uporabimo splošno definicijo dobimo:
+\begin{equation*}
+  \Symbol{S} \Derive \Symbol{A}\begin{aligned}[t]
+    &\Derive \underline{\Symbol{a}} \Seq \Symbol{A}\\
+    &\Derive \underline{\Null}\\
+\end{aligned}
+\end{equation*}
+\begin{equation*}
+  \FIRST(\Symbol{A}) = \{\Null, \Symbol{a}\}
+\end{equation*}
+
+Ne glede koliko krat izpeljemo dalje $\Symbol{A}$ bo na začetku še vedno $\Symbol{a}$.
+\begin{equation*}
+  \Symbol{S} \Derive \Symbol{A}\begin{aligned}[t]
+    &\Derive \underline{\Symbol{a}} \Seq \Symbol{A} \begin{aligned}[t]
+      &\Derive \underline{\Symbol{a}} \Seq \Symbol{a} \Seq \Symbol{A} \Derive \dots\\
+      &\Derive \underline{\Symbol{a}} \Seq \Null\\
+  \end{aligned}\\
+  &\Derive \underline{\Null}\\
+\end{aligned}
+\end{equation*}
+\begin{equation*}
+  \FIRST(\Symbol{A}) = \{\Null, \Symbol{a}\}
+\end{equation*}
 
 \section{FOLLOW}
 Funkcija $\FOLLOW$ vrne vse terminalne simbole, ki sledijo nekemu neterminalnemu simbolu v vseh stavčnih oblikah.
@@ -1294,7 +1443,6 @@ Primer kode za jezike, ki so bolj podobni C:
 
 \section{Primeri}
 
-
 \subsection{Seznam}
 
 \subsubsection*{Jezik}
@@ -1458,7 +1606,6 @@ Primer kode za jezike, ki so bolj podobni C:
 \subsubsection*{Gramatika}
 \begin{equation*}
   \begin{aligned}
-    \Symbol{Program} &\Arrow \Symbol{Stmts}\\
     \Symbol{Stmts} &\Arrow \Symbol{Stmt} \Seq \Symbol{semi} \Seq \Symbol{Stmts} \Union \Null\\
     \Symbol{Stmt} &\Arrow \Symbol{id} \Seq \Symbol{assign} \Seq \Symbol{Expr} \Union \Symbol{print} \Seq \Symbol{Expr}\\
     \Symbol{Expr} &\Arrow \Symbol{Term} \Seq \Symbol{Expr'}\\
@@ -1472,7 +1619,7 @@ Primer kode za jezike, ki so bolj podobni C:
 
 \subsection{Lisp}
 \begin{verbatim}
-  (cons 1 (cons 1 ()))
+  (cons 1 (cons 1 nil))
 \end{verbatim}
 \begin{verbatim}
   (cons (+ 1 1) 2)
@@ -1484,6 +1631,7 @@ Primer kode za jezike, ki so bolj podobni C:
 \subsubsection*{Regularni izrazi}
 \begin{equation*}
   \begin{aligned}
+    \Symbol{nil} &= \Char{n} \Seq \Char{i} \Seq \Char{l}\\
     \Symbol{int} &= \KleenePlus{\{\Char{0}, \dots, \Char{9}\}}\\
     \Symbol{id} &= \KleenePlus{\{\Char{a}, \dots, \Char{z}, \Char{+}, \Char{-}, \Char{*}, \Char{/} \}}\\
     \Symbol{lparen} &= \Char{(}\\
@@ -1495,8 +1643,8 @@ Primer kode za jezike, ki so bolj podobni C:
 \begin{equation*}
   \begin{aligned}
     \Symbol{App} &\Arrow \Symbol{lparen} \Seq \Symbol{Expr} \Seq \Symbol{Exprs} \Seq \Symbol{rparen}\\
-    \Symbol{Expr} &\Arrow \Symbol{Expr} \Seq \Symbol{Exprs} \Union \Null\\
-    \Symbol{Expr} &\Arrow \Symbol{int} \Union \Symbol{id} \Union \Symbol{App}
+    \Symbol{Exprs} &\Arrow \Symbol{Expr} \Seq \Symbol{Exprs} \Union \Null\\
+    \Symbol{Expr} &\Arrow \Symbol{int} \Union \Symbol{id} \Union \Symbol{nil} \Union \Symbol{App}
   \end{aligned}
 \end{equation*}
 
