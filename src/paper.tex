@@ -912,7 +912,6 @@ Torej, če izračunamo $\FIRST$ dobimo vedno $\Symbol{a}$:
 \begin{equation*}
   \begin{aligned}
     \FIRST(\{\Symbol{a} \Seq \Symbol{b_1}, \dots, \Symbol{a} \Seq \Symbol{b_n}\}) &= \FIRST(\Symbol{a} \Seq \Symbol{b_1}) \cup \dots \cup \FIRST(\Symbol{a} \Seq \Symbol{b_n})\\
-    &= \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{b_1})) \cup \dots \cup \FIRST(\FIRST(\Symbol{a}) \Seq \FIRST(\Symbol{b_1}))\\
     &= \FIRST(\Symbol{a}) \cup \dots \cup \FIRST(\Symbol{a})\\
     &= \{\Symbol{a}\} \cup \dots \cup \{\Symbol{a}\}\\
     &= \{\Symbol{a}\}
@@ -1183,6 +1182,112 @@ $\Symbol{D}$ se pojavi v $\Symbol{D} \Seq \underline{\Symbol{C} \Seq \EOF}$, tor
              &= \{\Symbol{c}\}
 \end{align*}
 
+\subsection{Rekurzija}
+Recimo, da imamo rekurzivno gramatiko:
+\begin{equation*}
+  \NGrammar{}
+  \label{g:first}
+  \begin{aligned}
+    \Symbol{S} &\Arrow \Symbol{A} \\
+    \Symbol{A} &\Arrow \Symbol{a} \Seq \Symbol{B}\\
+    \Symbol{B} &\Arrow \Symbol{a} \Seq \Symbol{A} \Union \Null\\
+  \end{aligned}
+\end{equation*}
+
+Tukaj pride to težave, ko želimo izračunati $\FOLLOW(\Symbol{A})$ in $\FOLLOW(\Symbol{B})$, za izračun $\FOLLOW(\Symbol{B})$ potrebujemo $\FOLLOW(\Symbol{A})$ in za izračun $\FOLLOW(\Symbol{A})$ potrebujemo $\FOLLOW(\Symbol{B})$.
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{A}) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{B})) \cup \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{S})) \\
+                        &= \FOLLOW(\Symbol{B}) \cup \FIRST(\{\Null\} \Seq \{\EOF\})) \\
+                        &= \FOLLOW(\Symbol{B}) \cup \FIRST(\{\Null \Seq \EOF\})) \\
+                        &= \FOLLOW(\Symbol{B}) \cup \FIRST(\EOF) \\
+                        &= \FOLLOW(\Symbol{B}) \cup \{\EOF\} \\
+    \FOLLOW(\Symbol{B}) &= \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{A}))\\
+                        &= \FOLLOW(\Symbol{A})\\
+  \end{aligned}
+\end{equation*}
+Enačba je torej rekurzivna.
+Rešimo jo tako, da na začetku določimo za vsak neterminalen simbol $A$, razen za $\StartSymbol$, $\FOLLOW(A) = \Empty$.
+Potem pri vseh enačbah vzamemo obstoječe vrednosti $\FOLLOW(A)$ in izračunamo naslednjo vrednost $\FOLLOW(A)$.
+Postopek ponavljamo tako dolgo, da se vrednosti $\FOLLOW(A)$ nehajo spreminjati.
+
+\Ex
+Določimo, da je $\FOLLOW(\Symbol{A}) = \Empty$ in $\FOLLOW(\Symbol{B}) = \Empty$.
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{S}) &= \{\EOF\}\\
+    \FOLLOW(\Symbol{A}) &= \Empty\\
+    \FOLLOW(\Symbol{B}) &= \Empty
+  \end{aligned}
+\end{equation*}
+
+Sedaj lahko vstavimo:
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{A}) &= \FOLLOW(\Symbol{B}) \cup \{\EOF\} \\
+                        &= \Empty \cup \{\EOF\} \\
+                        &= \{\EOF\} \\
+    \FOLLOW(\Symbol{B}) &= \FOLLOW(\Symbol{A})\\
+                        &= \Empty
+  \end{aligned}
+\end{equation*}
+Dobimo naslednji vrednosti $\FOLLOW(\Symbol{A}) = \{\EOF\}$ in $\FOLLOW(\Symbol{B}) = \Empty$, postopek ponovimo.
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{A}) &= \FOLLOW(\Symbol{B}) \cup \{\EOF\} \\
+                        &= \Empty \cup \{\EOF\} \\
+                        &= \{\EOF\} \\
+    \FOLLOW(\Symbol{B}) &= \FOLLOW(\Symbol{A})\\
+                        &= \{\EOF\}
+  \end{aligned}
+\end{equation*}
+Dobimo naslednji vrednosti $\FOLLOW(\Symbol{A}) = \{\EOF\}$ in $\FOLLOW(\Symbol{B}) = \{\EOF\}$, postopek ponovimo.
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{A}) &= \FOLLOW(\Symbol{B}) \cup \{\EOF\} \\
+                        &= \{\EOF\} \cup \{\EOF\} \\
+                        &= \{\EOF\} \\
+    \FOLLOW(\Symbol{B}) &= \FOLLOW(\Symbol{A})\\
+                        &= \{\EOF\}
+  \end{aligned}
+\end{equation*}
+Dobili smo spet $\FOLLOW(\Symbol{A}) = \{\EOF\}$ in $\FOLLOW(\Symbol{B}) = \{\EOF\}$, tukaj se ustavimo.
+Rešitev izračuna je, torej:
+\begin{equation*}
+  \begin{aligned}
+    \FOLLOW(\Symbol{S}) &= \{\EOF\}\\
+    \FOLLOW(\Symbol{A}) &= \{\EOF\}\\
+    \FOLLOW(\Symbol{B}) &= \{\EOF\}
+  \end{aligned}
+\end{equation*}
+Če želimo $\FOLLOW$ implementirati uporabimo ta postopek, ker je popolnoma splošen in deluje za vse gramatike.
+
+Če uporabimo definicijo na podlagi stavčnih oblik:
+\begin{equation*}
+  \Symbol{S} \Seq \EOF \Derive \Symbol{A} \Seq \EOF \Derive \Symbol{a} \Seq \Symbol{B} \begin{aligned}[t]
+    &\Derive \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{A} \Seq \EOF \Derive \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{B} \Seq \EOF \begin{aligned}[t]
+      &\Derive \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{A} \Seq \EOF \Derive \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{B} \Seq \EOF \Derive \dots \\
+      &\Derive \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \EOF\\
+    \end{aligned}\\
+    &\Derive \Symbol{a} \Seq \EOF
+  \end{aligned}
+\end{equation*}
+
+Torej vse možne stavčne oblike so:
+\begin{equation*}
+  \Symbol{S} \Seq \EOF, \Symbol{A} \Seq \EOF, \Symbol{a} \Seq \Symbol{B} \Seq \EOF, \Symbol{a} \Seq \EOF, \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{A} \Seq \EOF, \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{B} \Seq \EOF\dots
+\end{equation*}
+
+
+$\Symbol{A}$ se pojavi v $\Symbol{A} \Seq \underline{\EOF}, \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{A} \Seq \underline{\EOF}, \dots$, torej:
+\begin{equation*}
+  \FOLLOW(\Symbol{A}) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
+\end{equation*}
+
+$\Symbol{B}$ se pojavi v  $\Symbol{a} \Seq \Symbol{B} \Seq \underline{\EOF}, \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{a} \Seq \Symbol{B} \Seq \underline{\EOF}, \dots$, torej:
+\begin{equation*}
+  \FOLLOW(\Symbol{B}) = \FIRST(\EOF) \cup \dots \cup \FIRST(\EOF) = \{\EOF\}
+\end{equation*}
 
 %Za odločitev, namesto $\FIRST(D)$ in $\FIRST(a)$, uporabimo $\FIRST(\FIRST(D) \Seq \FOLLOW(A))$ in $\FIRST(\FIRST(a) \Seq \FOLLOW(A))$.
 %
@@ -1271,7 +1376,6 @@ $\Symbol{D}$ se pojavi v $\Symbol{D} \Seq \underline{\Symbol{C} \Seq \EOF}$, tor
 %Kljub temu pa bi bil $a \Seq d$ zavrnjen, ker se $d$ ne ujema z $b$ v izpeljanem stavku $a \Seq b$.
 
 
-%\subsection*{Primeri}
 
 \section{Implementacija}
 
@@ -1497,7 +1601,7 @@ Primer kode za jezike, ki so bolj podobni C:
     \FIRST(\FIRST(\Symbol{comma} \Seq \Symbol{Items}) \Seq \FOLLOW(\Symbol{Items'})) &= \{\Symbol{comma}\}\\
     \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{Items'})) &= \{\Symbol{rbrak}\}\\
     \FIRST(\FIRST(\Symbol{int}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
-    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{string}\}\\
   \end{aligned}
 \end{equation*}
 
@@ -1566,7 +1670,7 @@ Primer kode za jezike, ki so bolj podobni C:
     \FIRST(\FIRST(\Symbol{Entry} \Seq \Symbol{semi} \Seq \Symbol{Entries}) \Seq \FOLLOW(\Symbol{Entries})) &= \{\Symbol{int}, \Symbol{string}\}\\
     \FIRST(\FIRST(\Null) \Seq \FOLLOW(\Symbol{Entries'})) &= \{\Symbol{rbrac}\}\\
     \FIRST(\FIRST(\Symbol{int}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
-    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{int}\}\\
+    \FIRST(\FIRST(\Symbol{string}) \Seq \FOLLOW(\Symbol{Item})) &= \{\Symbol{string}\}\\
   \end{aligned}
 \end{equation*}
 
